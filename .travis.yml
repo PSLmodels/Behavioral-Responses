@@ -1,0 +1,29 @@
+sudo: false
+
+language: python
+python:
+  - "3.6"
+
+install:
+  # Install conda
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update conda
+  - conda create -n behavioral-responses-dev python=$TRAVIS_PYTHON_VERSION;
+  - source activate behavioral-responses-dev
+  - conda env update -f environment.yml
+  - pip install pyyaml
+  - pip install pytest-pep8
+  - pip install coverage
+  - pip install codecov
+  - python setup.py install
+
+
+# command to run tests
+script:
+  - python -c "import behavioral-responses"; coverage run -m pytest -v -m "not pre_release and not local" --pep8
+
+after_success:
+  - codecov

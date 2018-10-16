@@ -1,0 +1,5 @@
+[run]
+omit =
+    behavioral-responses/_version.py
+    behavioral-responses/*json
+    behavioral-responses/tests/*
