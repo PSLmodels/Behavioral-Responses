@@ -51,7 +51,6 @@ pytest-all:
 	@$(pytest-cleanup)
 
 BR_JSON_FILES := $(shell ls -l ./$(BR)/*json | awk '{print $$9}')
-TESTS_JSON_FILES := $(shell ls -l ./$(BR)/tests/*json | awk '{print $$9}')
 PYLINT_FILES := $(shell grep -rl --include="*py" disable=locally-disabled .)
 PYLINT_OPTIONS = --disable=locally-disabled --score=no --jobs=4
 
@@ -59,7 +58,6 @@ PYLINT_OPTIONS = --disable=locally-disabled --score=no --jobs=4
 cstest:
 	pycodestyle behavioral-responses
 	@pycodestyle --ignore=E501,E121 $(BR_JSON_FILES)
-	@pycodestyle --ignore=E501,E121 $(TESTS_JSON_FILES)
 #	@pylint $(PYLINT_OPTIONS) $(PYLINT_FILES)
 
 define coverage-cleanup

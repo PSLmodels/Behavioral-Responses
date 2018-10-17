@@ -1,4 +1,0 @@
-include versioneer.py
-include behavioral-responses/_version.py
-include taxcalc/behavior.json
-
