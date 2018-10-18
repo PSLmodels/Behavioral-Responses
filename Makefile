@@ -58,7 +58,7 @@ PYLINT_OPTIONS = --disable=locally-disabled --score=no --jobs=4
 cstest:
 	pycodestyle behavioral-responses
 	@pycodestyle --ignore=E501,E121 $(BR_JSON_FILES)
-#	@pylint $(PYLINT_OPTIONS) $(PYLINT_FILES)
+	@pylint $(PYLINT_OPTIONS) $(PYLINT_FILES)
 
 define coverage-cleanup
 rm -f .coverage htmlcov/*
