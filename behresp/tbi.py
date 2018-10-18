@@ -15,7 +15,7 @@ def run_nth_year_behresp_model(year_n, start_year,
                                use_puf_not_cps,
                                use_full_sample,
                                user_mods,
-                               elasticity,
+                               behavior,
                                return_dict=True):
     """
     Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
@@ -23,12 +23,12 @@ def run_nth_year_behresp_model(year_n, start_year,
 
     The first five and the last function arguments are the same as for the
       run_nth_year_taxcalc_model function in the Tax-Calculator repository.
-    The run_nth_year_behresp_model function assumes elasticity is a dictionary
-      containing the assumed values of the behavioral-responses elasticities.
+    The run_nth_year_behresp_model function assumes behavior is a dictionary
+      containing the assumed values of the behavioral-response elasticities.
     """
     # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     assert isinstance(user_mods, dict)
-    assert isinstance(elasticity, dict)
+    assert isinstance(behavior, dict)
 
     # create calc1 and calc2 calculated for year_n
     tbi.check_years(year_n, start_year, use_puf_not_cps)

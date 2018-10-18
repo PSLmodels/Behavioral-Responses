@@ -10,16 +10,15 @@ import numpy as np
 import taxcalc as tc
 
 
-def response(calc1, calc2, elasticity, trace=False):
+def response(calc1, calc2, behavior, trace=False):
     """
     Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
     returning results as a tuple of distribution table dataframes (df1, df2)
     where:
     df1 is extracted from the baseline-policy calc1, and
     df2 is extracted from a copy of the reform-policy calc2 that incorporates
-        the behavioral responses given the nature of the baseline-to-reform
-        change in policy and the specified elasticities in the elasticity
-        dictionary.
+        the behavioral responses given by the nature of the baseline-to-reform
+        change in policy and elasticities in the specified behavior dictionary.
 
     Note: this function internally modifies a copy of calc2 records to account
       for behavioral responses that arise from the policy reform that involves
@@ -57,7 +56,7 @@ def response(calc1, calc2, elasticity, trace=False):
 
     assert isinstance(calc1, tc.Calculator)
     assert isinstance(calc2, tc.Calculator)
-    assert isinstance(elasticity, dict)
+    assert isinstance(behavior, dict)
 
     # nested function used only in response
     def trace_output(varname, variable, histbins, pweight, dweight):
