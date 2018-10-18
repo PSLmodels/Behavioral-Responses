@@ -38,26 +38,24 @@ rm -f df-??-#-*
 rm -f tmp??????-??-#-tmp*
 endef
 
-BR = behavioral-responses
-
 .PHONY=pytest
 pytest:
-	@cd $(BR) ; pytest -n4 -m "not pre_release"
+	@cd behresp ; pytest -n4 -m "not pre_release"
 	@$(pytest-cleanup)
 
 .PHONY=pytest-all
 pytest-all:
-	@cd $(BR) ; pytest -n4 -m ""
+	@cd behresp ; pytest -n4 -m ""
 	@$(pytest-cleanup)
 
-BR_JSON_FILES := $(shell ls -l ./$(BR)/*json | awk '{print $$9}')
+JSON_FILES := $(shell find . -name "*json")
 PYLINT_FILES := $(shell grep -rl --include="*py" disable=locally-disabled .)
 PYLINT_OPTIONS = --disable=locally-disabled --score=no --jobs=4
 
 .PHONY=cstest
 cstest:
-	pycodestyle behavioral-responses
-	@pycodestyle --ignore=E501,E121 $(BR_JSON_FILES)
+	pycodestyle behresp
+	@pycodestyle --ignore=E501,E121 $(JSON_FILES)
 	@pylint $(PYLINT_OPTIONS) $(PYLINT_FILES)
 
 define coverage-cleanup

@@ -10,16 +10,22 @@ import numpy as np
 import taxcalc as tc
 
 
-def response(calc1, calc2, trace=False):
+def response(calc1, calc2, elasticity, trace=False):
     """
-    Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis.
+    Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
+    returning results as a tuple of distribution table dataframes (df1, df2)
+    where:
+    df1 is extracted from the baseline-policy calc1, and
+    df2 is extracted from a copy of the reform-policy calc2 that incorporates
+        the behavioral responses given the nature of the baseline-to-reform
+        change in policy and the specified elasticities in the elasticity
+        dictionary.
 
-    Modify calc2 records to account for behavioral responses that arise
-      from the policy reform that involves moving from calc1 policy to
-      calc2 policy.  Neither calc1 nor calc2 need to have had calc_all()
-      executed before calling the response(calc1, calc2) function.
-    Returns new Calculator object --- a deepcopy of calc2 --- that
-      incorporates behavioral responses to the reform.
+    Note: this function internally modifies a copy of calc2 records to account
+      for behavioral responses that arise from the policy reform that involves
+      moving from calc1 policy to calc2 policy.  Neither calc1 nor calc2 need
+      to have had calc_all() executed before calling the response function.
+
     Note: the use here of a dollar-change income elasticity (rather than
       a proportional-change elasticity) is consistent with Feldstein and
       Feenberg, "The Taxation of Two Earner Families", NBER Working Paper
@@ -27,6 +33,7 @@ def response(calc1, calc2, trace=False):
       Gruber and Saez, "The elasticity of taxable income: evidence and
       implications", Journal of Public Economics 84:1-32 (2002) [see
       equation 2 on page 10].
+
     Note: the nature of the capital-gains elasticity used here is similar
       to that used in Joint Committee on Taxation, "New Evidence on the
       Tax Elasticity of Capital Gains: A Joint Working Paper of the Staff
@@ -47,6 +54,10 @@ def response(calc1, calc2, trace=False):
       rate elasticity of -0.792.
     """
     # pylint: disable=too-many-statements,too-many-locals,too-many-branches
+
+    assert isinstance(calc1, tc.Calculator)
+    assert isinstance(calc2, tc.Calculator)
+    assert isinstance(elasticity, dict)
 
     # nested function used only in response
     def trace_output(varname, variable, histbins, pweight, dweight):

@@ -6,37 +6,36 @@ returned as expected by TaxBrain.
 # pycodestyle tbi.py
 # pylint --disable=locally-disabled tbi.py
 
-import copy
 import numpy as np
-import taxcalc as tc
-from behavioral-response.behavior import response
+import taxcalc.tbi as tbi
+# from behresp.behavior import response
 
 
 def run_nth_year_behresp_model(year_n, start_year,
                                use_puf_not_cps,
                                use_full_sample,
+                               user_mods,
                                elasticity,
                                return_dict=True):
     """
-    Returns behavioral-response results as expected by TaxBrain.
+    Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
+    returning behavioral-response results as expected by TaxBrain.
 
+    The first five and the last function arguments are the same as for the
+      run_nth_year_taxcalc_model function in the Tax-Calculator repository.
     The run_nth_year_behresp_model function assumes elasticity is a dictionary
       containing the assumed values of the behavioral-responses elasticities.
-    Setting use_puf_not_cps=True implies use puf.csv input file;
-      otherwise, use cps.csv input file.
-    Setting use_full_sample=False implies use sub-sample of input file;
-      otherwsie, use the complete sample.
     """
     # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
-
-    start_time = time.time()
+    assert isinstance(user_mods, dict)
+    assert isinstance(elasticity, dict)
 
     # create calc1 and calc2 calculated for year_n
-    check_years(year_n, start_year, use_puf_not_cps)
-    calc1, calc2 = calculator_objects(year_n, start_year,
-                                      use_puf_not_cps, use_full_sample,
-                                      user_mods,
-                                      behavior_allowed=True)
+    tbi.check_years(year_n, start_year, use_puf_not_cps)
+    calc1, calc2 = tbi.calculator_objects(year_n, start_year,
+                                          use_puf_not_cps, use_full_sample,
+                                          user_mods,
+                                          behavior_allowed=True)
 
     # extract unfuzzed raw results from calc1 and calc2
     dv1 = calc1.distribution_table_dataframe()
@@ -52,34 +51,34 @@ def run_nth_year_behresp_model(year_n, start_year,
     if fuzzing:
         # seed random number generator with a seed value based on user_mods
         # (reform-specific seed is used to choose whose results are fuzzed)
-        seed = random_seed(user_mods)
+        seed = tbi.random_seed(user_mods)
         print('fuzzing_seed={}'.format(seed))
         np.random.seed(seed)  # pylint: disable=no-member
         # make bool array marking which filing units are affected by the reform
         reform_affected = np.logical_not(  # pylint: disable=no-member
             np.isclose(dv1['combined'], dv2['combined'], atol=0.01, rtol=0.0)
         )
-        agg1, agg2 = fuzzed(dv1, dv2, reform_affected, 'aggr')
-        sres = summary_aggregate(sres, agg1, agg2)
+        agg1, agg2 = tbi.fuzzed(dv1, dv2, reform_affected, 'aggr')
+        sres = tbi.summary_aggregate(sres, agg1, agg2)
         del agg1
         del agg2
-        dv1b, dv2b = fuzzed(dv1, dv2, reform_affected, 'xbin')
-        sres = summary_dist_xbin(sres, dv1b, dv2b)
-        sres = summary_diff_xbin(sres, dv1b, dv2b)
+        dv1b, dv2b = tbi.fuzzed(dv1, dv2, reform_affected, 'xbin')
+        sres = tbi.summary_dist_xbin(sres, dv1b, dv2b)
+        sres = tbi.summary_diff_xbin(sres, dv1b, dv2b)
         del dv1b
         del dv2b
-        dv1d, dv2d = fuzzed(dv1, dv2, reform_affected, 'xdec')
-        sres = summary_dist_xdec(sres, dv1d, dv2d)
-        sres = summary_diff_xdec(sres, dv1d, dv2d)
+        dv1d, dv2d = tbi.fuzzed(dv1, dv2, reform_affected, 'xdec')
+        sres = tbi.summary_dist_xdec(sres, dv1d, dv2d)
+        sres = tbi.summary_diff_xdec(sres, dv1d, dv2d)
         del dv1d
         del dv2d
         del reform_affected
     else:
-        sres = summary_aggregate(sres, dv1, dv2)
-        sres = summary_dist_xbin(sres, dv1, dv2)
-        sres = summary_diff_xbin(sres, dv1, dv2)
-        sres = summary_dist_xdec(sres, dv1, dv2)
-        sres = summary_diff_xdec(sres, dv1, dv2)
+        sres = tbi.summary_aggregate(sres, dv1, dv2)
+        sres = tbi.summary_dist_xbin(sres, dv1, dv2)
+        sres = tbi.summary_diff_xbin(sres, dv1, dv2)
+        sres = tbi.summary_dist_xdec(sres, dv1, dv2)
+        sres = tbi.summary_diff_xdec(sres, dv1, dv2)
 
     # nested function used below
     def append_year(dframe):
@@ -95,8 +94,6 @@ def run_nth_year_behresp_model(year_n, start_year,
         res = dict()
         for tbl in sres:
             res[tbl] = append_year(sres[tbl])
-        elapsed_time = time.time() - start_time
-        print('elapsed time for this run: {:.1f}'.format(elapsed_time))
         return res
 
     # optionally construct JSON-like results dictionaries for year n
@@ -104,9 +101,9 @@ def run_nth_year_behresp_model(year_n, start_year,
     dec_row_names_n = [x + '_' + str(year_n) for x in dec_rownames]
     bin_rownames = list(sres['diff_comb_xbin'].index.values)
     bin_row_names_n = [x + '_' + str(year_n) for x in bin_rownames]
-    agg_row_names_n = [x + '_' + str(year_n) for x in AGG_ROW_NAMES]
-    dist_column_types = [float] * len(DIST_TABLE_LABELS)
-    diff_column_types = [float] * len(DIFF_TABLE_LABELS)
+    agg_row_names_n = [x + '_' + str(year_n) for x in tbi.AGG_ROW_NAMES]
+    dist_column_types = [float] * len(tbi.DIST_TABLE_LABELS)
+    diff_column_types = [float] * len(tbi.DIFF_TABLE_LABELS)
     info = dict()
     for tbl in sres:
         info[tbl] = {'row_names': [], 'col_types': []}
@@ -123,17 +120,14 @@ def run_nth_year_behresp_model(year_n, start_year,
     res = dict()
     for tbl in sres:
         if 'aggr' in tbl:
-            res_table = create_dict_table(sres[tbl],
-                                          row_names=info[tbl]['row_names'])
+            res_table = tbi.create_dict_table(sres[tbl],
+                                              row_names=info[tbl]['row_names'])
             res[tbl] = dict((k, v[0]) for k, v in res_table.items())
         else:
-            res[tbl] = create_dict_table(sres[tbl],
-                                         row_names=info[tbl]['row_names'],
-                                         column_types=info[tbl]['col_types'])
-
-    elapsed_time = time.time() - start_time
-    print('elapsed time for this run: {:.1f}'.format(elapsed_time))
-
+            col_types_info = info[tbl]['col_types']
+            res[tbl] = tbi.create_dict_table(sres[tbl],
+                                             row_names=info[tbl]['row_names'],
+                                             column_types=col_types_info)
     return res
 
 
