@@ -20,7 +20,8 @@ Behavioral-Responses feature of the web application called
 What is Behavioral-Responses?
 -----------------------------
 
-Behavioral-Responses estimates partial-equilibrium behavioral
+Behavioral-Responses, which is in the Policy Simulation Library (PSL)
+collection of USA tax models, estimates partial-equilibrium behavioral
 responses to changes in the US federal individual income and payroll
 tax system as simulated by
 [Tax-Calculator](https://github.com/open-source-economics/Tax-Calculator)
