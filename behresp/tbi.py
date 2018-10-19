@@ -53,9 +53,9 @@ def run_nth_year_behresp_model(year_n, start_year,
         # (reform-specific seed is used to choose whose results are fuzzed)
         seed = tbi.random_seed(user_mods)
         print('fuzzing_seed={}'.format(seed))
-        np.random.seed(seed)  # pylint: disable=no-member
+        np.random.seed(seed)
         # make bool array marking which filing units are affected by the reform
-        reform_affected = np.logical_not(  # pylint: disable=no-member
+        reform_affected = np.logical_not(
             np.isclose(dv1['combined'], dv2['combined'], atol=0.01, rtol=0.0)
         )
         agg1, agg2 = tbi.fuzzed(dv1, dv2, reform_affected, 'aggr')

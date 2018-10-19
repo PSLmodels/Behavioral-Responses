@@ -10,20 +10,59 @@ import numpy as np
 import taxcalc as tc
 
 
+# Behavioral-Response parameter information
+PARAM_INFO = {
+    'BE_sub': {
+        'long_name': 'Substitution elasticity of taxable income',
+        'description': ('Defined as proportional change in taxable income '
+                        'divided by proportional change in marginal '
+                        'net-of-tax rate (1-MTR) on taxpayer earnings '
+                        'caused by the reform.  Must be zero or positive.'),
+        'default_value': 0.0,
+        'minimum_value': 0.0,
+        'maximum_value': 9e99
+    },
+    'BE_inc': {
+        'long_name': 'Income elasticity of taxable income',
+        'description': ('Defined as dollar change in taxable income '
+                        'divided by dollar change in after-tax income '
+                        'caused by the reform.  Must be zero or negative.'),
+        'default_value': 0.0,
+        'minimum_value': -9e99,
+        'maximum_value': 0.0
+    },
+    'BE_cg': {
+        'long_name': 'Semi-elasticity of long-term capital gains',
+        'description': ('Defined as change in logarithm of long-term '
+                        'capital gains divided by change in marginal tax '
+                        'rate (MTR) on long-term capital gains caused by '
+                        'the reform.  Must be zero or negative.  Read '
+                        'response function documentation (see below) for '
+                        'discussion of appropriate values.'),
+        'default_value': 0.0,
+        'minimum_value': -9e99,
+        'maximum_value': 0.0
+    }
+}
+
+
 def response(calc1, calc2, behavior, trace=False):
     """
     Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
     returning results as a tuple of distribution table dataframes (df1, df2)
     where:
     df1 is extracted from the baseline-policy calc1, and
-    df2 is extracted from a copy of the reform-policy calc2 that incorporates
-        the behavioral responses given by the nature of the baseline-to-reform
+    df2 is extracted from a reform-policy calc2 copy that incorporates the
+        behavioral responses given by the nature of the baseline-to-reform
         change in policy and elasticities in the specified behavior dictionary.
 
     Note: this function internally modifies a copy of calc2 records to account
       for behavioral responses that arise from the policy reform that involves
       moving from calc1 policy to calc2 policy.  Neither calc1 nor calc2 need
       to have had calc_all() executed before calling the response function.
+
+    The behavior argument is a dictionary returned from the Tax-Calculator
+    Calculator.read_json_assumptions method.
 
     Note: the use here of a dollar-change income elasticity (rather than
       a proportional-change elasticity) is consistent with Feldstein and
@@ -44,7 +83,7 @@ def response(calc1, calc2, behavior, trace=False):
       the elasticity used here times the weighted average marginal tax
       rate on long-term capital gains.  So, the JCT-CBO estimate of
       -0.792 for the epsilon elasticity (see JCT-CBO, Table 5) translates
-      into a much larger absolute value for the _BE_cg semi-elasticity
+      into a much larger absolute value for the BE_cg semi-elasticity
       used by Tax-Calculator.
       To calculate the elasticity from a semi-elasticity, we multiply by
       MTRs from TC and weight by shares of taxable gains. To avoid those
@@ -52,7 +91,7 @@ def response(calc1, calc2, behavior, trace=False):
       Using this function, a semi-elasticity of -3.45 corresponds to a tax
       rate elasticity of -0.792.
     """
-    # pylint: disable=too-many-statements,too-many-locals,too-many-branches
+    # pylint: disable=too-many-locals,too-many-statements
 
     assert isinstance(calc1, tc.Calculator)
     assert isinstance(calc2, tc.Calculator)
@@ -80,9 +119,11 @@ def response(calc1, calc2, behavior, trace=False):
     # begin main logic of response function
     assert calc1.array_len == calc2.array_len
     assert calc1.current_year == calc2.current_year
+    pvalue = tc.ParametersBase.param_dict_for_year(calc1.current_year,
+                                                   behavior, PARAM_INFO)
     mtr_cap = 0.99
     # calculate sum of substitution and income effects
-    if calc2.behavior('BE_sub') == 0.0 and calc2.behavior('BE_inc') == 0.0:
+    if pvalue['BE_sub'] == 0.0 and pvalue['BE_inc'] == 0.0:
         zero_sub_and_inc = True
     else:
         zero_sub_and_inc = False
@@ -92,7 +133,7 @@ def response(calc1, calc2, behavior, trace=False):
                                       mtr_of='e00200p',
                                       tax_type='combined')
         # calculate magnitude of substitution effect
-        if calc2.behavior('BE_sub') == 0.0:
+        if pvalue['BE_sub'] == 0.0:
             sub = np.zeros(calc1.array_len)
         else:
             # proportional change in marginal net-of-tax rates on earnings
@@ -100,8 +141,7 @@ def response(calc1, calc2, behavior, trace=False):
             mtr2 = np.where(wage_mtr2 > mtr_cap, mtr_cap, wage_mtr2)
             pch = ((1. - mtr2) / (1. - mtr1)) - 1.
             # Note: c04800 is filing unit's taxable income
-            sub = (calc2.behavior('BE_sub') *
-                   pch * calc1.array('c04800'))
+            sub = (pvalue['BE_sub'] * pch * calc1.array('c04800'))
             if trace:
                 trace_output('wmtr1', wage_mtr1,
                              [-9e99, 0.00, 0.25, 0.50, 0.60,
@@ -126,17 +166,17 @@ def response(calc1, calc2, behavior, trace=False):
                              calc1.array('s006'),
                              np.zeros(calc1.array_len))
         # calculate magnitude of income effect
-        if calc2.behavior('BE_inc') == 0.0:
+        if pvalue['BE_inc'] == 0.0:
             inc = np.zeros(calc1.array_len)
         else:
             # dollar change in after-tax income
             # Note: combined is f.unit's income+payroll tax liability
             dch = calc1.array('combined') - calc2.array('combined')
-            inc = calc2.behavior('BE_inc') * dch
+            inc = pvalue['BE_inc'] * dch
         # calculate sum of substitution and income effects
         si_chg = sub + inc
     # calculate long-term capital-gains effect
-    if calc2.behavior('BE_cg') == 0.0:
+    if pvalue['BE_cg'] == 0.0:
         ltcg_chg = np.zeros(calc1.array_len)
     else:
         # calculate marginal tax rates on long-term capital gains
@@ -145,7 +185,7 @@ def response(calc1, calc2, behavior, trace=False):
                                       mtr_of='p23250',
                                       tax_type='iitax')
         rch = ltcg_mtr2 - ltcg_mtr1
-        exp_term = np.exp(calc2.behavior('BE_cg') * rch)
+        exp_term = np.exp(pvalue['BE_cg'] * rch)
         new_ltcg = calc1.array('p23250') * exp_term
         ltcg_chg = new_ltcg - calc1.array('p23250')
     # Add behavioral-response changes to income sources

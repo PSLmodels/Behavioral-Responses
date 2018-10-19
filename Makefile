@@ -54,9 +54,9 @@ PYLINT_OPTIONS = --disable=locally-disabled --score=no --jobs=4
 
 .PHONY=cstest
 cstest:
-	pycodestyle behresp
-	@pycodestyle --ignore=E501,E121 $(JSON_FILES)
-	@pylint $(PYLINT_OPTIONS) $(PYLINT_FILES)
+	-pycodestyle behresp
+	@-pycodestyle --ignore=E501,E121 $(JSON_FILES)
+	@-pylint $(PYLINT_OPTIONS) $(PYLINT_FILES)
 
 define coverage-cleanup
 rm -f .coverage htmlcov/*
