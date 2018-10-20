@@ -12,7 +12,7 @@ import pytest
 # TODO: import taxcalc as tc
 from behresp import PARAM_INFO, response
 
-@pytest.mark.one
+
 def test_param_info():
     """
     Test structure and content of PARAM_INFO dictionary.
