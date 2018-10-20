@@ -7,7 +7,7 @@ Partial-equilibrium elasticity-based Behavioral-Responses logic.
 
 import copy
 import numpy as np
-import taxcalc as tc
+# TODO: import taxcalc as tc
 
 
 # Behavioral-Response parameter information
@@ -93,8 +93,8 @@ def response(calc1, calc2, behavior, trace=False):
     """
     # pylint: disable=too-many-locals,too-many-statements
 
-    assert isinstance(calc1, tc.Calculator)
-    assert isinstance(calc2, tc.Calculator)
+    # TODO:    assert isinstance(calc1, tc.Calculator)
+    # TODO:    assert isinstance(calc2, tc.Calculator)
     assert isinstance(behavior, dict)
 
     # nested function used only in response
@@ -119,8 +119,9 @@ def response(calc1, calc2, behavior, trace=False):
     # begin main logic of response function
     assert calc1.array_len == calc2.array_len
     assert calc1.current_year == calc2.current_year
-    pvalue = tc.ParametersBase.param_dict_for_year(calc1.current_year,
-                                                   behavior, PARAM_INFO)
+    pvalue = dict()  # TODO
+    # TODO: pvalue = tc.ParametersBase.param_dict_for_year(calc1.current_year,
+    #                                                    behavior, PARAM_INFO)
     mtr_cap = 0.99
     # calculate sum of substitution and income effects
     if pvalue['BE_sub'] == 0.0 and pvalue['BE_inc'] == 0.0:
