@@ -13,7 +13,7 @@ environment:
     # Since appveyor is quite slow, we only use a single configuration
     - PYTHON: "3.6"
       ARCH: "64"
-      CONDA_ENV: behavioral-responses-dev
+      CONDA_ENV: behresp-dev
 
 init:
   # Use AppVeyor's provided Miniconda, which is available from

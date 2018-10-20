@@ -1,8 +1,6 @@
 import os
 import numpy
-import pandas
 import pytest
-
 
 # convert all numpy warnings into errors so they can be detected in tests
 numpy.seterr(all='raise')

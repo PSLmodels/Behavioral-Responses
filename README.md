@@ -64,7 +64,7 @@ complete list of merged, closed, and pending pull requests.
 
 If you are relying on Behavioral-Responses capabilities in your own project,
 be sure to read the definition of the [Behavioral-Responses Public
-API](http://behavioral-responses.readthedocs.io/en/latest/public_api.html).
+API](http://behresp.readthedocs.io/en/latest/public_api.html).
 
 
 Citing Behavioral-Responses

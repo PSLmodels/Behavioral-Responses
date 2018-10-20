@@ -1,10 +1,10 @@
 import versioneer
 versioneer.VCS = 'git'
-versioneer.versionfile_source = 'behavioral-responses/_version.py'
-versioneer.versionfile_build = 'behavioral-responses/_version.py'
+versioneer.versionfile_source = 'behresp/_version.py'
+versioneer.versionfile_build = 'behresp/_version.py'
 versioneer.tag_prefix = ''  # tags are like 1.2.0
-versioneer.parentdir_prefix = 'behavioral-responses-'
-# above dirname like 'behavioral-responses-1.2.0'
+versioneer.parentdir_prefix = 'behresp-'
+# above dirname like 'behresp-1.2.0'
 
 try:
     from setuptools import setup
@@ -21,14 +21,14 @@ config = {
     'description': 'Behavioral Responses',
     'url': 'https://github.com/open-source-economics/Behavioral-Responses',
     'download_url': 'https://github.com/open-source-economics/Behavioral-Responses',
-    'description': 'behavioral-responses',
+    'description': 'behresp',
     'long_description': longdesc,
     'version': version,
     'cmdclass': cmdclass,
     'license': 'MIT',
-    'packages': ['behavioral-responses'],
+    'packages': ['behresp'],
     'include_package_data': True,
-    'name': 'behavioral-responses',
+    'name': 'behresp',
     'install_requires': ['numpy', 'pandas'],
     'classifiers': [
         'Development Status :: 4 - Beta',
