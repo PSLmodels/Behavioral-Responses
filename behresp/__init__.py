@@ -1,5 +1,5 @@
 """
-Specify what is available to import from the behavioral-responses package.
+Specify what is available to import from the behresp package.
 """
 from behresp.behavior import PARAM_INFO, response
 from behresp.tbi import run_nth_year_behresp_model

@@ -11,8 +11,8 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda config --set always_yes yes --set changeps1 no
   - conda update conda
-  - conda create -n behavioral-responses-dev python=$TRAVIS_PYTHON_VERSION;
-  - source activate behavioral-responses-dev
+  - conda create -n behresp-dev python=$TRAVIS_PYTHON_VERSION;
+  - source activate behresp-dev
   - conda env update -f environment.yml
   - pip install pyyaml
   - pip install pytest-pep8
@@ -23,7 +23,7 @@ install:
 
 # command to run tests
 script:
-  - python -c "import behavioral-responses"; coverage run -m pytest -v -m "not pre_release and not local" --pep8
+  - python -c "import behresp"; coverage run -m pytest -v -m "not pre_release and not local" --pep8
 
 after_success:
   - codecov

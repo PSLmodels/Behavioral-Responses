@@ -1,5 +1,5 @@
 [run]
 omit =
-    behavioral-responses/_version.py
-    behavioral-responses/*json
-    behavioral-responses/tests/*
+    behresp/_version.py
+    behresp/*json
+    behresp/tests/*
