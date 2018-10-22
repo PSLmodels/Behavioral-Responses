@@ -48,7 +48,7 @@ pytest-all:
 	@cd behresp ; pytest -n4 -m ""
 	@$(pytest-cleanup)
 
-JSON_FILES := $(shell find . -name "*json")
+JSON_FILES := $(shell find . -name "*json" | grep -v htmlcov)
 PYLINT_FILES := $(shell grep -rl --include="*py" disable=locally-disabled .)
 PYLINT_OPTIONS = --disable=locally-disabled --score=no --jobs=4
 

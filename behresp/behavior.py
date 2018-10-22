@@ -93,15 +93,13 @@ def response(calc_1, calc_2, behavior, trace=False):
       rate elasticity of -0.792.
     """
     # pylint: disable=too-many-locals,too-many-statements
-
     calc1 = copy.deepcopy(calc_1)
     calc2 = copy.deepcopy(calc_2)
-
     assert isinstance(calc1, tc.Calculator)
     assert isinstance(calc2, tc.Calculator)
     assert isinstance(behavior, dict)
 
-    # nested function used only in response
+    # Nested function used only in response
     def trace_output(varname, variable, histbins, pweight, dweight):
         """
         Print trace output for specified variable.
@@ -120,13 +118,15 @@ def response(calc_1, calc_2, behavior, trace=False):
             mean = (variable * dweight).sum() / dweight.sum()
             print(out.format(mean))
 
-    # begin main logic of response function
+    # Begin main logic of response function
+    calc1.calc_all()
+    calc2.calc_all()
     assert calc1.array_len == calc2.array_len
     assert calc1.current_year == calc2.current_year
     pvalue = tc.ParametersBase.param_dict_for_year(calc1.current_year,
                                                    behavior, PARAM_INFO)
     mtr_cap = 0.99
-    # calculate sum of substitution and income effects
+    # Calculate sum of substitution and income effects
     if pvalue['BE_sub'] == 0.0 and pvalue['BE_inc'] == 0.0:
         zero_sub_and_inc = True
     else:
@@ -179,7 +179,7 @@ def response(calc_1, calc_2, behavior, trace=False):
             inc = pvalue['BE_inc'] * dch
         # calculate sum of substitution and income effects
         si_chg = sub + inc
-    # calculate long-term capital-gains effect
+    # Calculate long-term capital-gains effect
     if pvalue['BE_cg'] == 0.0:
         ltcg_chg = np.zeros(calc1.array_len)
     else:
@@ -207,7 +207,7 @@ def response(calc_1, calc_2, behavior, trace=False):
     df2 = calc2_behv.distribution_table_dataframe()
     del calc2_behv
     # Return the two dataframes
-    return df1, df2
+    return (df1, df2)
 
 
 # ----- begin private functions -----
@@ -257,11 +257,9 @@ def _mtr12(calc1, calc2, mtr_of='e00200p', tax_type='combined'):
     Computes marginal tax rates for Calculator objects calc1 and calc2
     for specified mtr_of income type and specified tax_type.
     """
+    assert tax_type == 'combined' or tax_type == 'iitax'
     _, iitax1, combined1 = calc1.mtr(mtr_of, wrt_full_compensation=True)
     _, iitax2, combined2 = calc2.mtr(mtr_of, wrt_full_compensation=True)
     if tax_type == 'combined':
         return (combined1, combined2)
-    elif tax_type == 'iitax':
-        return (iitax1, iitax2)
-    else:
-        raise ValueError('tax_type must be "combined" or "iitax"')
+    return (iitax1, iitax2)
