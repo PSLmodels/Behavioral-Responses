@@ -6,6 +6,7 @@ Tests for functions in behavior.py file.
 # pylint --disable=locally-disabled test_behavior.py
 
 import numpy as np
+import pandas as pd
 import taxcalc as tc
 from behresp import PARAM_INFO, response
 
@@ -53,16 +54,32 @@ def test_response_function():
     calc1y.advance_to_year(refyear)
     calc2y.advance_to_year(refyear)
 
-    behx_json = '{"BE_sub": {"2018": 0.25}}'
+    behx_json = """{
+    "BE_sub": {"2018": 0.25},
+    "BE_inc": {"2018": -0.1},
+    "BE_cg": {"2018": -0.79}
+    }"""
     behx_dict = tc.Calculator.read_json_assumptions(behx_json)
-    df1, df2 = response(calc1x, calc2x, behx_dict)
+    df1, df2 = response(calc1x, calc2x, behx_dict, trace=True)
     itax1x = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
     itax2x = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     print(itax1x, itax2x)
 
-    calc2y_behv = tc.Behavior.response(calc1y, calc2y)
+    calc2y_behv = tc.Behavior.response(calc1y, calc2y, trace=True)
     itax1y = round(calc1y.weighted_total('iitax') * 1e-9, 3)
     itax2y = round(calc2y_behv.weighted_total('iitax') * 1e-9, 3)
     print(itax1y, itax2y)
 
-    assert np.allclose([itax1x, itax2x], [1413.428, 1360.747])
+    assert np.allclose([itax1x, itax2x], [1413.428, 1359.683])
+
+    beh_dict = tc.Calculator.read_json_assumptions('{}')
+    df1, df2 = response(calc1x, calc2x, beh_dict)
+    assert isinstance(df1, pd.DataFrame)
+    assert isinstance(df2, pd.DataFrame)
+
+    beh_dict = tc.Calculator.read_json_assumptions(
+        '{"BE_inc": {"2018": -0.1}}'
+    )
+    df1, df2 = response(calc1x, calc2x, beh_dict)
+    assert isinstance(df1, pd.DataFrame)
+    assert isinstance(df2, pd.DataFrame)

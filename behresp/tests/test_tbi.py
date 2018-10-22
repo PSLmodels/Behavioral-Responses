@@ -7,8 +7,19 @@ Tests for functions in tbi.py file.
 
 import numpy as np
 import pandas as pd
+import pytest
 import taxcalc as tc
-from behresp import run_nth_year_behresp_model, response
+from behresp import assumption_errors, run_nth_year_behresp_model, response
+
+
+def test_assumption_errors():
+    """
+    Test assumption_error function.
+    """
+    behv_json = '{"BE_sub": {"2018": -0.25}}'
+    behv_dict = tc.Calculator.read_json_assumptions(behv_json)
+    errmsg = assumption_errors(behv_dict, 2013, 10)
+    assert errmsg
 
 
 def test_behavioral_response():
@@ -112,3 +123,35 @@ def test_behavioral_response():
                 print(std)
     assert no_diffs
     assert not dumping
+
+
+@pytest.mark.requires_pufcsv
+def test_fuzzing_and_returning_dict():
+    """
+    Test returning of non-JSON PUF results from run_nth_year_behresp_model().
+    """
+    # specify policy reform and behavioral assumptions
+    reform_json = '{"policy": {"_II_em": {"2020": [1500]}}}'
+    params = tc.Calculator.read_json_param_objects(reform_json, None)
+    beh_json = '{"BE_sub": {"2013": 0.25}}'
+    beh_dict = tc.Calculator.read_json_assumptions(beh_json)
+    # specify keyword arguments used in tbi function call
+    kwargs = {
+        'start_year': 2020,
+        'year_n': 0,
+        'use_puf_not_cps': True,
+        'use_full_sample': False,
+        'user_mods': {
+            'policy': params['policy'],
+            'behavior': dict(),
+            'growdiff_baseline': params['growdiff_baseline'],
+            'growdiff_response': params['growdiff_response'],
+            'consumption': params['consumption'],
+            'growmodel': params['growmodel']
+        },
+        'behavior': beh_dict,
+        'return_dict': True
+    }
+    # call run_nth_year_behresp_model function
+    tables = run_nth_year_behresp_model(**kwargs)
+    assert isinstance(tables, dict)

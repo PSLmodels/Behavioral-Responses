@@ -12,6 +12,8 @@ help:
 	@echo "help       : show help message"
 	@echo "clean      : remove .pyc files and local package"
 	@echo "package    : build and install local package"
+	@echo "pytest-cps : generate report for and cleanup after"
+	@echo "             pytest -m 'not requires_pufcsv and not pre_release'"
 	@echo "pytest     : generate report for and cleanup after"
 	@echo "             pytest -m 'not pre_release'"
 	@echo "pytest-all : generate report for and cleanup after"
@@ -38,6 +40,11 @@ rm -f df-??-#-*
 rm -f tmp??????-??-#-tmp*
 endef
 
+.PHONY=pytest-cps
+pytest-cps:
+	@cd taxcalc ; pytest -n4 -m "not requires_pufcsv and not pre_release"
+	@$(pytest-cleanup)
+
 .PHONY=pytest
 pytest:
 	@cd behresp ; pytest -n4 -m "not pre_release"
@@ -62,7 +69,7 @@ define coverage-cleanup
 rm -f .coverage htmlcov/*
 endef
 
-COVMARK = "not requires_pufcsv and not pre_release"
+COVMARK = "not pre_release"
 
 OS := $(shell uname -s)
 
