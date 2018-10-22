@@ -7,7 +7,7 @@ Partial-equilibrium elasticity-based Behavioral-Responses logic.
 
 import copy
 import numpy as np
-# TODO: import taxcalc as tc
+import taxcalc as tc
 
 
 # Behavioral-Response parameter information

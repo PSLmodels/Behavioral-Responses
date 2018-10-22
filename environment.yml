@@ -3,6 +3,9 @@ dependencies:
 - python >=3.6.5,<3.7
 - numpy >=1.12.1
 - pandas >=0.22.0
+- git
+- pip
+  - "--editable=git+https://github.com/open-source-economics/Tax-Calculator@master"
 - pytest
 - pytest-pep8
 - pytest-xdist
