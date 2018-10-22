@@ -46,20 +46,21 @@ PARAM_INFO = {
 }
 
 
-def response(calc1, calc2, behavior, trace=False):
+def response(calc_1, calc_2, behavior, trace=False):
     """
     Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
     returning results as a tuple of distribution table dataframes (df1, df2)
     where:
-    df1 is extracted from the baseline-policy calc1, and
-    df2 is extracted from a reform-policy calc2 copy that incorporates the
+    df1 is extracted from a baseline-policy calc_1 copy, and
+    df2 is extracted from a reform-policy calc_2 copy that incorporates the
         behavioral responses given by the nature of the baseline-to-reform
         change in policy and elasticities in the specified behavior dictionary.
 
-    Note: this function internally modifies a copy of calc2 records to account
+    Note: this function internally modifies a copy of calc_2 records to account
       for behavioral responses that arise from the policy reform that involves
-      moving from calc1 policy to calc2 policy.  Neither calc1 nor calc2 need
+      moving from calc1 policy to calc2 policy.  Neither calc_1 nor calc_2 need
       to have had calc_all() executed before calling the response function.
+      And neither calc_1 nor calc_2 are affected by this response function.
 
     The behavior argument is a dictionary returned from the Tax-Calculator
     Calculator.read_json_assumptions method.
@@ -93,8 +94,11 @@ def response(calc1, calc2, behavior, trace=False):
     """
     # pylint: disable=too-many-locals,too-many-statements
 
-    # TODO:    assert isinstance(calc1, tc.Calculator)
-    # TODO:    assert isinstance(calc2, tc.Calculator)
+    calc1 = copy.deepcopy(calc_1)
+    calc2 = copy.deepcopy(calc_2)
+
+    assert isinstance(calc1, tc.Calculator)
+    assert isinstance(calc2, tc.Calculator)
     assert isinstance(behavior, dict)
 
     # nested function used only in response
@@ -119,9 +123,8 @@ def response(calc1, calc2, behavior, trace=False):
     # begin main logic of response function
     assert calc1.array_len == calc2.array_len
     assert calc1.current_year == calc2.current_year
-    pvalue = dict()  # TODO
-    # TODO: pvalue = tc.ParametersBase.param_dict_for_year(calc1.current_year,
-    #                                                    behavior, PARAM_INFO)
+    pvalue = tc.ParametersBase.param_dict_for_year(calc1.current_year,
+                                                   behavior, PARAM_INFO)
     mtr_cap = 0.99
     # calculate sum of substitution and income effects
     if pvalue['BE_sub'] == 0.0 and pvalue['BE_inc'] == 0.0:
@@ -189,15 +192,22 @@ def response(calc1, calc2, behavior, trace=False):
         exp_term = np.exp(pvalue['BE_cg'] * rch)
         new_ltcg = calc1.array('p23250') * exp_term
         ltcg_chg = new_ltcg - calc1.array('p23250')
+    # Extract dataframe from calc1
+    df1 = calc1.distribution_table_dataframe()
+    del calc1
     # Add behavioral-response changes to income sources
     calc2_behv = copy.deepcopy(calc2)
+    del calc2
     if not zero_sub_and_inc:
         calc2_behv = _update_ordinary_income(si_chg, calc2_behv)
     calc2_behv = _update_cap_gain_income(ltcg_chg, calc2_behv)
     # Recalculate post-reform taxes incorporating behavioral responses
     calc2_behv.calc_all()
-    calc2_behv.records_include_behavioral_responses()
-    return calc2_behv
+    # Extract dataframe from calc2_behv
+    df2 = calc2_behv.distribution_table_dataframe()
+    del calc2_behv
+    # Return the two dataframes
+    return df1, df2
 
 
 # ----- begin private functions -----

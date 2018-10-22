@@ -31,6 +31,9 @@ def test_for_consistency(tests_path):
     and conda.recipe/meta.yaml requirements.
     """
     dev_pkgs = set([
+        'git',
+        ('pip - git+https://github.com/open-source-economics/'
+         'Tax-Calculator.git@master'),
         'pytest',
         'pytest-pep8',
         'pytest-xdist',
