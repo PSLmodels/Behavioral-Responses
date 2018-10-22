@@ -44,6 +44,7 @@ def test_response_function():
     calc1y = tc.Calculator(records=rec, policy=pol)
     refyear = 2020
     pol.implement_reform({refyear: {'_II_em': [1500]}})
+    assert not pol.parameter_errors
     calc2x = tc.Calculator(records=rec, policy=pol)
     calc2y = tc.Calculator(records=rec, policy=pol, behavior=behy_obj)
 
