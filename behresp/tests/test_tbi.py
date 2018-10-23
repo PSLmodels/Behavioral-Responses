@@ -98,6 +98,9 @@ def test_behavioral_response():
                     std_res[cyr][tbl] = pd.DataFrame(data=datalist,
                                                      index=rows,
                                                      columns=cols)
+                    for col in std_res[cyr][tbl].columns:
+                        val = std_res[cyr][tbl][col] * 1e-9
+                        std_res[cyr][tbl][col] = round(val, 3)
     # compare the two sets of results
     no_diffs = True
     dumping = False  # setting to True produces dump output and test failure
