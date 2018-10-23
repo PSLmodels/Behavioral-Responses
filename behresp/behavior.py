@@ -123,8 +123,8 @@ def response(calc_1, calc_2, behavior, trace=False):
     calc2.calc_all()
     assert calc1.array_len == calc2.array_len
     assert calc1.current_year == calc2.current_year
-    pvalue = tc.ParametersBase.param_dict_for_year(calc1.current_year,
-                                                   behavior, PARAM_INFO)
+    pvalue = tc.Parameters.param_dict_for_year(calc1.current_year,
+                                               behavior, PARAM_INFO)
     mtr_cap = 0.99
     # Calculate sum of substitution and income effects
     if pvalue['BE_sub'] == 0.0 and pvalue['BE_inc'] == 0.0:

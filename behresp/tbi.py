@@ -25,7 +25,7 @@ def assumption_errors(behavior, start_year, num_years):
     for iyr in range(0, num_years):
         cyear = start_year + iyr
         try:
-            tc.ParametersBase.param_dict_for_year(cyear, behavior, PARAM_INFO)
+            tc.Parameters.param_dict_for_year(cyear, behavior, PARAM_INFO)
         except AssertionError as errmsg:
             errors += 'ERROR in year={}: {} '.format(cyear, errmsg.__str__())
     return errors
