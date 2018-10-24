@@ -93,13 +93,14 @@ def response(calc_1, calc_2, behavior, trace=False):
       rate elasticity of -0.792.
     """
     # pylint: disable=too-many-locals,too-many-statements
+
     calc1 = copy.deepcopy(calc_1)
     calc2 = copy.deepcopy(calc_2)
     assert isinstance(calc1, tc.Calculator)
     assert isinstance(calc2, tc.Calculator)
     assert isinstance(behavior, dict)
 
-    # Nested function used only in response
+    # Nested functions used only in response
     def trace_output(varname, variable, histbins, pweight, dweight):
         """
         Print trace output for specified variable.
@@ -117,6 +118,55 @@ def response(calc_1, calc_2, behavior, trace=False):
             out = '*** Dollar-weighted mean= {:.2f}'
             mean = (variable * dweight).sum() / dweight.sum()
             print(out.format(mean))
+
+    def _update_ordinary_income(taxinc_change, calc):
+        """
+        Implement total taxable income change induced by behavioral response.
+        """
+        # compute AGI minus itemized deductions, agi_m_ided
+        agi = calc.array('c00100')
+        ided = np.where(calc.array('c04470') < calc.array('standard'),
+                        0., calc.array('c04470'))
+        agi_m_ided = agi - ided
+        # assume behv response only for filing units with positive agi_m_ided
+        pos = np.array(agi_m_ided > 0., dtype=bool)
+        delta_income = np.where(pos, taxinc_change, 0.)
+        # allocate delta_income into three parts
+        winc = calc.array('e00200')
+        delta_winc = np.zeros_like(agi)
+        delta_winc[pos] = delta_income[pos] * winc[pos] / agi_m_ided[pos]
+        oinc = agi - winc
+        delta_oinc = np.zeros_like(agi)
+        delta_oinc[pos] = delta_income[pos] * oinc[pos] / agi_m_ided[pos]
+        delta_ided = np.zeros_like(agi)
+        delta_ided[pos] = delta_income[pos] * ided[pos] / agi_m_ided[pos]
+        # confirm that the three parts are consistent with delta_income
+        assert np.allclose(delta_income, delta_winc + delta_oinc - delta_ided)
+        # add the three parts to different records variables embedded in calc
+        calc.incarray('e00200', delta_winc)
+        calc.incarray('e00200p', delta_winc)
+        calc.incarray('e00300', delta_oinc)
+        calc.incarray('e19200', delta_ided)
+        return calc
+
+    def _update_cap_gain_income(cap_gain_change, calc):
+        """
+        Implement capital gain change induced by behavioral responses.
+        """
+        calc.incarray('p23250', cap_gain_change)
+        return calc
+
+    def _mtr12(calc__1, calc__2, mtr_of='e00200p', tax_type='combined'):
+        """
+        Computes marginal tax rates for Calculator objects calc__1 and calc__2
+        for specified mtr_of income type and specified tax_type.
+        """
+        assert tax_type == 'combined' or tax_type == 'iitax'
+        _, iitax1, combined1 = calc__1.mtr(mtr_of, wrt_full_compensation=True)
+        _, iitax2, combined2 = calc__2.mtr(mtr_of, wrt_full_compensation=True)
+        if tax_type == 'combined':
+            return (combined1, combined2)
+        return (iitax1, iitax2)
 
     # Begin main logic of response function
     calc1.calc_all()
@@ -208,58 +258,3 @@ def response(calc_1, calc_2, behavior, trace=False):
     del calc2_behv
     # Return the two dataframes
     return (df1, df2)
-
-
-# ----- begin private functions -----
-
-
-def _update_ordinary_income(taxinc_change, calc):
-    """
-    Implement total taxable income change induced by behavioral response.
-    """
-    # compute AGI minus itemized deductions, agi_m_ided
-    agi = calc.array('c00100')
-    ided = np.where(calc.array('c04470') < calc.array('standard'),
-                    0., calc.array('c04470'))
-    agi_m_ided = agi - ided
-    # assume behv response only for filing units with positive agi_m_ided
-    pos = np.array(agi_m_ided > 0., dtype=bool)
-    delta_income = np.where(pos, taxinc_change, 0.)
-    # allocate delta_income into three parts
-    winc = calc.array('e00200')
-    delta_winc = np.zeros_like(agi)
-    delta_winc[pos] = delta_income[pos] * winc[pos] / agi_m_ided[pos]
-    oinc = agi - winc
-    delta_oinc = np.zeros_like(agi)
-    delta_oinc[pos] = delta_income[pos] * oinc[pos] / agi_m_ided[pos]
-    delta_ided = np.zeros_like(agi)
-    delta_ided[pos] = delta_income[pos] * ided[pos] / agi_m_ided[pos]
-    # confirm that the three parts are consistent with delta_income
-    assert np.allclose(delta_income, delta_winc + delta_oinc - delta_ided)
-    # add the three parts to different records variables embedded in calc
-    calc.incarray('e00200', delta_winc)
-    calc.incarray('e00200p', delta_winc)
-    calc.incarray('e00300', delta_oinc)
-    calc.incarray('e19200', delta_ided)
-    return calc
-
-
-def _update_cap_gain_income(cap_gain_change, calc):
-    """
-    Implement capital gain change induced by behavioral responses.
-    """
-    calc.incarray('p23250', cap_gain_change)
-    return calc
-
-
-def _mtr12(calc1, calc2, mtr_of='e00200p', tax_type='combined'):
-    """
-    Computes marginal tax rates for Calculator objects calc1 and calc2
-    for specified mtr_of income type and specified tax_type.
-    """
-    assert tax_type == 'combined' or tax_type == 'iitax'
-    _, iitax1, combined1 = calc1.mtr(mtr_of, wrt_full_compensation=True)
-    _, iitax2, combined2 = calc2.mtr(mtr_of, wrt_full_compensation=True)
-    if tax_type == 'combined':
-        return (combined1, combined2)
-    return (iitax1, iitax2)
