@@ -1,4 +1,6 @@
 name: behresp-dev
+channels:
+- ospc
 dependencies:
 - python >=3.6.5,<3.7
 - numpy >=1.12.1
