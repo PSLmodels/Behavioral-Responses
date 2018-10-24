@@ -100,7 +100,7 @@ def response(calc_1, calc_2, behavior, trace=False):
     assert isinstance(calc2, tc.Calculator)
     assert isinstance(behavior, dict)
 
-    # Nested functions used only in response
+    # Begin nested functions used only in this response function
     def trace_output(varname, variable, histbins, pweight, dweight):
         """
         Print trace output for specified variable.
@@ -167,6 +167,7 @@ def response(calc_1, calc_2, behavior, trace=False):
         if tax_type == 'combined':
             return (combined1, combined2)
         return (iitax1, iitax2)
+    # End nested functions used only in this response function
 
     # Begin main logic of response function
     calc1.calc_all()
