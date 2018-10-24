@@ -34,6 +34,35 @@ def test_response_function():
     """
     # pylint: disable=too-many-locals
 
+    rec = tc.Records.cps_constructor()
+
+    refyear = 2020
+    reform = {refyear: {'_II_em': [1500]}}
+
+    # use new behresp response function for x results
+    behx_json = """{
+    "BE_sub": {"2018": 0.25},
+    "BE_inc": {"2018": -0.1},
+    "BE_cg": {"2018": -0.79}
+    }"""
+    behx_dict = tc.Calculator.read_json_assumptions(behx_json)
+    pol = tc.Policy()
+    calc1x = tc.Calculator(records=rec, policy=pol)
+    pol.implement_reform(reform)
+    calc2x = tc.Calculator(records=rec, policy=pol)
+    del pol
+    calc1x.advance_to_year(refyear)
+    calc2x.advance_to_year(refyear)
+    df1, df2 = response(calc1x, calc2x, behx_dict, trace=True)
+    del calc1x
+    del calc2x
+    itax1x = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
+    itax2x = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
+    del df1
+    del df2
+    assert np.allclose([itax1x, itax2x], [1413.428, 1359.683])
+
+    # use old taxcalc Behavior class for y results
     behy_json = """{
     "_BE_sub": {"2018": [0.25]},
     "_BE_inc": {"2018": [-0.1]},
@@ -42,52 +71,58 @@ def test_response_function():
     behy_dict = tc.Calculator.read_json_assumptions(behy_json)
     behy_obj = tc.Behavior()
     behy_obj.update_behavior(behy_dict)
-
-    rec = tc.Records.cps_constructor()
     pol = tc.Policy()
-    calc1x = tc.Calculator(records=rec, policy=pol)
     calc1y = tc.Calculator(records=rec, policy=pol)
-    refyear = 2020
-    pol.implement_reform({refyear: {'_II_em': [1500]}})
-    assert not pol.parameter_errors
-    calc2x = tc.Calculator(records=rec, policy=pol)
+    pol.implement_reform(reform)
     calc2y = tc.Calculator(records=rec, policy=pol, behavior=behy_obj)
-    calc2s = tc.Calculator(records=rec, policy=pol)
-
-    calc1x.advance_to_year(refyear)
-    calc2x.advance_to_year(refyear)
+    del pol
     calc1y.advance_to_year(refyear)
     calc2y.advance_to_year(refyear)
-    calc2s.advance_to_year(refyear)
-
-    calc2s.calc_all()
-    itax2s = round(calc2s.weighted_total('iitax') * 1e-9, 3)
-
-    behx_json = """{
-    "BE_sub": {"2018": 0.25},
-    "BE_inc": {"2018": -0.1},
-    "BE_cg": {"2018": -0.79}
-    }"""
-    behx_dict = tc.Calculator.read_json_assumptions(behx_json)
-    df1, df2 = response(calc1x, calc2x, behx_dict, trace=True)
-    itax1x = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
-    itax2x = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
-    assert np.allclose([itax1x, itax2x], [1413.428, 1359.683])
-
     calc2y_behv = tc.Behavior.response(calc1y, calc2y, trace=True)
     itax1y = round(calc1y.weighted_total('iitax') * 1e-9, 3)
     itax2y = round(calc2y_behv.weighted_total('iitax') * 1e-9, 3)
-    assert np.allclose([itax1x, itax2x], [itax1y, itax2y])
+    del calc1y
+    del calc2y
+    assert np.allclose([itax1y, itax2y], [itax1x, itax2x])
 
+    # test that default behavioral parameters produce static results
     beh_dict = tc.Calculator.read_json_assumptions('{}')
+    pol = tc.Policy()
+    calc1x = tc.Calculator(records=rec, policy=pol)
+    pol.implement_reform(reform)
+    calc2x = tc.Calculator(records=rec, policy=pol)
+    calc1x.advance_to_year(refyear)
+    calc2x.advance_to_year(refyear)
     df1, df2 = response(calc1x, calc2x, beh_dict)
+    del calc1x
+    del calc2x
     itax1n = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
     itax2n = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
+    del df1
+    del df2
+    calc2s = tc.Calculator(records=rec, policy=pol)
+    del pol
+    calc2s.advance_to_year(refyear)
+    calc2s.calc_all()
+    itax2s = round(calc2s.weighted_total('iitax') * 1e-9, 3)
+    del calc2s
     assert np.allclose([itax1n, itax2n], [itax1x, itax2s])
 
+    # different behavior parameters to improve code coverage
     beh_dict = tc.Calculator.read_json_assumptions(
         '{"BE_inc": {"2018": -0.1}}'
     )
-    df1, df2 = response(calc1x, calc2x, beh_dict)
+    pol = tc.Policy()
+    calc1x = tc.Calculator(records=rec, policy=pol)
+    pol.implement_reform(reform)
+    calc2x = tc.Calculator(records=rec, policy=pol)
+    del pol
+    calc1x.advance_to_year(refyear)
+    calc2x.advance_to_year(refyear)
+    df1, df2 = response(calc1x, calc2x, beh_dict, trace=True)
+    del calc1x
+    del calc2x
     assert isinstance(df1, pd.DataFrame)
     assert isinstance(df2, pd.DataFrame)
+    del df1
+    del df2
