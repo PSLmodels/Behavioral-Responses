@@ -21,11 +21,11 @@ install:
   - python setup.py install
  
 # Ask Travis to wait for output
-install: travis_wait mvn install
+
 
 # command to run tests
 script:
-  - python -c "import behresp"; coverage run -m pytest -v -m "not requires_pufcsv and not pre_release and not local" --pep8
+  - travis_wait python -c "import behresp"; coverage run -m pytest -v -m "not requires_pufcsv and not pre_release and not local" --pep8
 
 after_success:
   - codecov
