@@ -28,13 +28,13 @@ def test_param_info():
         assert pdict['default_value'] <= pdict['maximum_value']
 
 
-def test_response_function():
+def test_response_function(cps_subsample):
     """
     Test response function.
     """
     # pylint: disable=too-many-locals,too-many-statements
 
-    rec = tc.Records.cps_constructor()
+    rec = tc.Records.cps_constructor(data=cps_subsample)
 
     refyear = 2020
     reform = {refyear: {'_II_em': [1500]}}
@@ -66,7 +66,7 @@ def test_response_function():
     itax2x = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     del df1
     del df2
-    assert np.allclose([itax1x, itax2x], [1413.428, 1359.683])
+    assert np.allclose([itax1x, itax2x], [1422.816, 1369.212])
 
     # use old taxcalc Behavior class for y results
     behy_dict = tc.Calculator.read_json_assumptions(behy_json)
