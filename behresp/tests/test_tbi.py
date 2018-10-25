@@ -74,6 +74,8 @@ def test_behavioral_response():
                 calc1.advance_to_year(cyr)
                 calc2.advance_to_year(cyr)
                 df1, df2 = response(calc1, calc2, beh_dict)
+                del calc1
+                del calc2
                 std_res[cyr] = dict()
                 wgt = df1['s006']
                 for tbl in ['aggr_1', 'aggr_2', 'aggr_d']:

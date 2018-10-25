@@ -50,7 +50,6 @@ def test_response_function():
     "_BE_cg": {"2018": [-0.79]}
     }"""
 
-    """
     # use new behresp response function for x results
     behx_dict = tc.Calculator.read_json_assumptions(behx_json)
     pol = tc.Policy()
@@ -128,4 +127,3 @@ def test_response_function():
     assert isinstance(df2, pd.DataFrame)
     del df1
     del df2
-    """
