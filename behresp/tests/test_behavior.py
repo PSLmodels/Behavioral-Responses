@@ -32,19 +32,26 @@ def test_response_function():
     """
     Test response function.
     """
-    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals,too-many-statements
 
     rec = tc.Records.cps_constructor()
 
     refyear = 2020
     reform = {refyear: {'_II_em': [1500]}}
 
-    # use new behresp response function for x results
     behx_json = """{
     "BE_sub": {"2018": 0.25},
     "BE_inc": {"2018": -0.1},
     "BE_cg": {"2018": -0.79}
     }"""
+    behy_json = """{
+    "_BE_sub": {"2018": [0.25]},
+    "_BE_inc": {"2018": [-0.1]},
+    "_BE_cg": {"2018": [-0.79]}
+    }"""
+
+    """
+    # use new behresp response function for x results
     behx_dict = tc.Calculator.read_json_assumptions(behx_json)
     pol = tc.Policy()
     calc1x = tc.Calculator(records=rec, policy=pol)
@@ -63,11 +70,6 @@ def test_response_function():
     assert np.allclose([itax1x, itax2x], [1413.428, 1359.683])
 
     # use old taxcalc Behavior class for y results
-    behy_json = """{
-    "_BE_sub": {"2018": [0.25]},
-    "_BE_inc": {"2018": [-0.1]},
-    "_BE_cg": {"2018": [-0.79]}
-    }"""
     behy_dict = tc.Calculator.read_json_assumptions(behy_json)
     behy_obj = tc.Behavior()
     behy_obj.update_behavior(behy_dict)
@@ -126,3 +128,4 @@ def test_response_function():
     assert isinstance(df2, pd.DataFrame)
     del df1
     del df2
+    """
