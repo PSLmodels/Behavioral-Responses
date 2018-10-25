@@ -111,7 +111,7 @@ def test_response_function():
 
     # different behavior parameters to improve code coverage
     beh_dict = tc.Calculator.read_json_assumptions(
-        '{"BE_inc": {"2018": -0.1}}'
+        '{"BE_inc": {"2018": -0.10}}'
     )
     pol = tc.Policy()
     calc1x = tc.Calculator(records=rec, policy=pol)
