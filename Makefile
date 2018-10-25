@@ -12,6 +12,8 @@ help:
 	@echo "help       : show help message"
 	@echo "clean      : remove .pyc files and local package"
 	@echo "package    : build and install local package"
+	@echo "pytest-cps : generate report for and cleanup after"
+	@echo "             pytest -m 'not requires_pufcsv and not pre_release'"
 	@echo "pytest     : generate report for and cleanup after"
 	@echo "             pytest -m 'not pre_release'"
 	@echo "pytest-all : generate report for and cleanup after"
@@ -38,35 +40,36 @@ rm -f df-??-#-*
 rm -f tmp??????-??-#-tmp*
 endef
 
-BR = behavioral-responses
+.PHONY=pytest-cps
+pytest-cps:
+	@cd taxcalc ; pytest -n4 -m "not requires_pufcsv and not pre_release"
+	@$(pytest-cleanup)
 
 .PHONY=pytest
 pytest:
-	@cd $(BR) ; pytest -n4 -m "not pre_release"
+	@cd behresp ; pytest -n4 -m "not pre_release"
 	@$(pytest-cleanup)
 
 .PHONY=pytest-all
 pytest-all:
-	@cd $(BR) ; pytest -n4 -m ""
+	@cd behresp ; pytest -n4 -m ""
 	@$(pytest-cleanup)
 
-BR_JSON_FILES := $(shell ls -l ./$(BR)/*json | awk '{print $$9}')
-TESTS_JSON_FILES := $(shell ls -l ./$(BR)/tests/*json | awk '{print $$9}')
+JSON_FILES := $(shell find . -name "*json" | grep -v htmlcov)
 PYLINT_FILES := $(shell grep -rl --include="*py" disable=locally-disabled .)
 PYLINT_OPTIONS = --disable=locally-disabled --score=no --jobs=4
 
 .PHONY=cstest
 cstest:
-	pycodestyle behavioral-responses
-	@pycodestyle --ignore=E501,E121 $(BR_JSON_FILES)
-	@pycodestyle --ignore=E501,E121 $(TESTS_JSON_FILES)
-#	@pylint $(PYLINT_OPTIONS) $(PYLINT_FILES)
+	-pycodestyle behresp
+	@-pycodestyle --ignore=E501,E121 $(JSON_FILES)
+	@-pylint $(PYLINT_OPTIONS) $(PYLINT_FILES)
 
 define coverage-cleanup
 rm -f .coverage htmlcov/*
 endef
 
-COVMARK = "not requires_pufcsv and not pre_release"
+COVMARK = "not pre_release"
 
 OS := $(shell uname -s)
 

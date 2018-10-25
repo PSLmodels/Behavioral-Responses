@@ -20,7 +20,8 @@ Behavioral-Responses feature of the web application called
 What is Behavioral-Responses?
 -----------------------------
 
-Behavioral-Responses estimates partial-equilibrium behavioral
+Behavioral-Responses, which is in the Policy Simulation Library (PSL)
+collection of USA tax models, estimates partial-equilibrium behavioral
 responses to changes in the US federal individual income and payroll
 tax system as simulated by
 [Tax-Calculator](https://github.com/open-source-economics/Tax-Calculator)
@@ -63,7 +64,7 @@ complete list of merged, closed, and pending pull requests.
 
 If you are relying on Behavioral-Responses capabilities in your own project,
 be sure to read the definition of the [Behavioral-Responses Public
-API](http://behavioral-responses.readthedocs.io/en/latest/public_api.html).
+API](http://behresp.readthedocs.io/en/latest/public_api.html).
 
 
 Citing Behavioral-Responses

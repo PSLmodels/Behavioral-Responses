@@ -1,5 +1,5 @@
 package:
-  name: behavioral-responses
+  name: behresp
   version: 0.0.0
 
 requirements:
@@ -7,15 +7,17 @@ requirements:
     - python >=3.6.5,<3.7
     - numpy >=1.12.1
     - pandas >=0.22.0
+    - taxcalc >=0.22.0
 
   run:
     - python >=3.6.5,<3.7
     - numpy >=1.12.1
     - pandas >=0.22.0
+    - taxcalc >=0.22.0
 
 test:
   imports:
-    - behavioral-responses
+    - behresp
 
 about:
-  home: https://github.com/open-source-economics/Behavioral-Responses
+  home: https://github.com/open-source-economics/Behavioral-Response
