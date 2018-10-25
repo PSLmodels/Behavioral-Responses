@@ -22,7 +22,7 @@ def test_assumption_errors():
     assert errmsg
 
 
-def test_behavioral_response():
+def test_behavioral_response(cps_subsample):
     """
     Test that behavioral-response results are the same
     when generated from standard Behavioral-Response calls and
@@ -39,7 +39,7 @@ def test_behavioral_response():
         'start_year': 2019,
         'year_n': 0,
         'use_puf_not_cps': False,
-        'use_full_sample': True,
+        'use_full_sample': False,
         'user_mods': {
             'policy': params['policy'],
             'behavior': dict(),
@@ -55,7 +55,7 @@ def test_behavioral_response():
     num_years = 3
     std_res = dict()
     tbi_res = dict()
-    rec = tc.Records.cps_constructor()
+    rec = tc.Records.cps_constructor(data=cps_subsample)
     for using_tbi in [True, False]:
         for year in range(0, num_years):
             cyr = year + kwargs['start_year']
