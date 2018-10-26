@@ -12,15 +12,13 @@ or making an enhancement to the Python source code.  If you only want
 to **use** Behavioral-Responses, you should begin by reading the [user
 documentation](http://open-source-economics.github.io/Behavioral-Responses/)
 that describes how to write Python scripts that use
-Behavioral-Responses on your own computer and how to use the
-Behavioral-Responses feature of the web application called
-[TaxBrain](http://www.ospc.org/taxbrain/).
+Behavioral-Responses on your own computer.
 
 
 What is Behavioral-Responses?
 -----------------------------
 
-Behavioral-Responses, which is in the Policy Simulation Library (PSL)
+Behavioral-Responses, which is part of the Policy Simulation Library (PSL)
 collection of USA tax models, estimates partial-equilibrium behavioral
 responses to changes in the US federal individual income and payroll
 tax system as simulated by
@@ -54,17 +52,16 @@ If you want to **propose code changes**, follow the directions in the
 Guide](http://taxcalc.readthedocs.io/en/latest/contributor_guide.html)
 on how to fork and clone the Behavioral-Responses git repository.
 Before developing any code changes be sure to read completely the
-Contributor Guide and then read about the [pull-request
+Tax-Calculator Contributor Guide and then read about the
+[Tax-Calculator pull-request
 workflow](https://github.com/open-source-economics/Tax-Calculator/blob/master/WORKFLOW.md#tax-calculator-pull-request-workflow).
+When reading both documents, be sure to mentally substitute
+Behavioral-Response for Tax-Calculator and behresp for taxcalc.
 
 The Behavioral-Responses [release
 history](https://github.com/open-source-economics/Behavioral-Responses/blob/master/RELEASES.md#tax-calculator-release-history)
 provides a high-level summary of past pull requests and access to a
 complete list of merged, closed, and pending pull requests.
-
-If you are relying on Behavioral-Responses capabilities in your own project,
-be sure to read the definition of the [Behavioral-Responses Public
-API](http://behresp.readthedocs.io/en/latest/public_api.html).
 
 
 Citing Behavioral-Responses
