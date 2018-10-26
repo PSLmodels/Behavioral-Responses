@@ -10,7 +10,7 @@ This document tells you how to begin contributing to
 Behavioral-Responses by reporting a bug, improving the documentation,
 or making an enhancement to the Python source code.  If you only want
 to **use** Behavioral-Responses, you should begin by reading the [user
-documentation](http://open-source-economics.github.io/Behavioral-Responses/)
+documentation](https://open-source-economics.github.io/Behavioral-Responses/)
 that describes how to write Python scripts that use
 Behavioral-Responses on your own computer.
 
