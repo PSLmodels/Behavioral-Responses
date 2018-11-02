@@ -3,8 +3,8 @@ channels:
 - ospc
 dependencies:
 - python=3.6
-- "numpy>=1.12.1"
-- "pandas>=0.22.0"
+- numpy=1.13
+- pandas=0.23
 - taxcalc
 - pytest
 - pytest-pep8
