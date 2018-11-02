@@ -3,9 +3,9 @@ channels:
 - ospc
 dependencies:
 - python=3.6
-- numpy>=1.12.1
-- pandas>=0.22.0
-- taxcalc>=0.22.1
+- "numpy>=1.12.1"
+- "pandas>=0.22.0"
+- taxcalc
 - pytest
 - pytest-pep8
 - pytest-xdist

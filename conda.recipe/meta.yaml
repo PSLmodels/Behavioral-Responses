@@ -5,15 +5,15 @@ package:
 requirements:
   build:
     - python=3.6
-    - numpy>=1.12.1
-    - pandas>=0.22.0
-    - taxcalc>=0.22.1
+    - "numpy>=1.12.1"
+    - "pandas>=0.22.0"
+    - taxcalc
 
   run:
     - python=3.6
-    - numpy>=1.12.1
-    - pandas>=0.22.0
-    - taxcalc>=0.22.1
+    - "numpy>=1.12.1"
+    - "pandas>=0.22.0"
+    - taxcalc
 
 test:
   imports:
