@@ -4,6 +4,26 @@ Go [here](https://github.com/open-source-economics/Behavioral-Responses/pulls?q=
 for a complete commit history.
 
 
+2018-11-03 Release 0.2.0
+------------------------
+(last merged pull request is
+[#15](https://github.com/open-source-economics/Behavioral-Responses/pull/15))
+
+**API Changes**
+- Make specification of required package versions comply with style in conda cheat sheet
+  [[#15](https://github.com/open-source-economics/Behavioral-Responses/pull/15)
+  by Martin Holmer]
+
+**New Features**
+- None
+
+**Bug Fixes**
+- None
+
+
+_Earlier Releases:_
+
+
 2018-11-01 Release 0.1.0
 ------------------------
 (last merged pull request is

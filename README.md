@@ -49,7 +49,7 @@ providing details on what you think should be added to Behavioral-Responses.
 
 If you want to **propose code changes**, follow the directions in the
 [Tax-Calculator Contributor
-Guide](http://taxcalc.readthedocs.io/en/latest/contributor_guide.html)
+Guide](https://taxcalc.readthedocs.io/en/latest/contributor_guide.html)
 on how to fork and clone the Behavioral-Responses git repository.
 Before developing any code changes be sure to read completely the
 Tax-Calculator Contributor Guide and then read about the
@@ -70,7 +70,7 @@ Citing Behavioral-Responses
 Please cite the source of your analysis as "Behavioral-Responses
 release #.#.#, author's calculations." If you wish to link to
 Behavioral-Responses,
-http://open-source-economics.github.io/Behavioral-Responses/ is
+https://open-source-economics.github.io/Behavioral-Responses/ is
 preferred.  Additionally, we strongly recommend that you describe the
 elasticity assumptions used, and provide a link to the materials
 required to replicate your analysis or, at least, note that those
