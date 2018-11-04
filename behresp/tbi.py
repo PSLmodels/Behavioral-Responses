@@ -8,7 +8,6 @@ returned as expected by TaxBrain.
 
 import numpy as np
 import taxcalc as tc
-import taxcalc.tbi as tbi
 from behresp.behavior import PARAM_INFO, response
 
 
@@ -47,15 +46,16 @@ def run_nth_year_behresp_model(year_n, start_year,
       returned from the Tax-Calculator Calculator.read_json_assumptions method
       containing the assumed values of the behavioral-response elasticities.
     """
-    # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
+    # pylint: disable=too-many-arguments,too-many-statements
+    # pylint: disable=too-many-locals,too-many-branches
     assert isinstance(user_mods, dict)
     assert isinstance(behavior, dict)
 
     # create calc1 and calc2 for year_n
-    tbi.check_years(year_n, start_year, use_puf_not_cps)
-    calc1, calc2 = tbi.calculators(year_n, start_year,
-                                   use_puf_not_cps, use_full_sample,
-                                   user_mods)
+    tc.tbi.check_years(year_n, start_year, use_puf_not_cps)
+    calc1, calc2 = tc.tbi.calculators(year_n, start_year,
+                                      use_puf_not_cps, use_full_sample,
+                                      user_mods)
 
     # extractf unfuzzed raw results from calc1 and calc2-with-response
     dv1, dv2 = response(calc1, calc2, behavior)
@@ -70,34 +70,34 @@ def run_nth_year_behresp_model(year_n, start_year,
     if fuzzing:
         # seed random number generator with a seed value based on user_mods
         # (reform-specific seed is used to choose whose results are fuzzed)
-        seed = tbi.random_seed(user_mods)
+        seed = tc.tbi.random_seed(user_mods)
         print('fuzzing_seed={}'.format(seed))
         np.random.seed(seed)
         # make bool array marking which filing units are affected by the reform
         reform_affected = np.logical_not(
             np.isclose(dv1['combined'], dv2['combined'], atol=0.01, rtol=0.0)
         )
-        agg1, agg2 = tbi.fuzzed(dv1, dv2, reform_affected, 'aggr')
-        sres = tbi.summary_aggregate(sres, agg1, agg2)
+        agg1, agg2 = tc.tbi.fuzzed(dv1, dv2, reform_affected, 'aggr')
+        sres = tc.tbi.summary_aggregate(sres, agg1, agg2)
         del agg1
         del agg2
-        dv1b, dv2b = tbi.fuzzed(dv1, dv2, reform_affected, 'xbin')
-        sres = tbi.summary_dist_xbin(sres, dv1b, dv2b)
-        sres = tbi.summary_diff_xbin(sres, dv1b, dv2b)
+        dv1b, dv2b = tc.tbi.fuzzed(dv1, dv2, reform_affected, 'xbin')
+        sres = tc.tbi.summary_dist_xbin(sres, dv1b, dv2b)
+        sres = tc.tbi.summary_diff_xbin(sres, dv1b, dv2b)
         del dv1b
         del dv2b
-        dv1d, dv2d = tbi.fuzzed(dv1, dv2, reform_affected, 'xdec')
-        sres = tbi.summary_dist_xdec(sres, dv1d, dv2d)
-        sres = tbi.summary_diff_xdec(sres, dv1d, dv2d)
+        dv1d, dv2d = tc.tbi.fuzzed(dv1, dv2, reform_affected, 'xdec')
+        sres = tc.tbi.summary_dist_xdec(sres, dv1d, dv2d)
+        sres = tc.tbi.summary_diff_xdec(sres, dv1d, dv2d)
         del dv1d
         del dv2d
         del reform_affected
     else:
-        sres = tbi.summary_aggregate(sres, dv1, dv2)
-        sres = tbi.summary_dist_xbin(sres, dv1, dv2)
-        sres = tbi.summary_diff_xbin(sres, dv1, dv2)
-        sres = tbi.summary_dist_xdec(sres, dv1, dv2)
-        sres = tbi.summary_diff_xdec(sres, dv1, dv2)
+        sres = tc.tbi.summary_aggregate(sres, dv1, dv2)
+        sres = tc.tbi.summary_dist_xbin(sres, dv1, dv2)
+        sres = tc.tbi.summary_diff_xbin(sres, dv1, dv2)
+        sres = tc.tbi.summary_dist_xdec(sres, dv1, dv2)
+        sres = tc.tbi.summary_diff_xdec(sres, dv1, dv2)
 
     # nested function used below
     def append_year(dframe):
@@ -120,9 +120,9 @@ def run_nth_year_behresp_model(year_n, start_year,
     dec_row_names_n = [x + '_' + str(year_n) for x in dec_rownames]
     bin_rownames = list(sres['diff_comb_xbin'].index.values)
     bin_row_names_n = [x + '_' + str(year_n) for x in bin_rownames]
-    agg_row_names_n = [x + '_' + str(year_n) for x in tbi.AGG_ROW_NAMES]
-    dist_column_types = [float] * len(tbi.DIST_TABLE_LABELS)
-    diff_column_types = [float] * len(tbi.DIFF_TABLE_LABELS)
+    agg_row_names_n = [x + '_' + str(year_n) for x in tc.tbi.AGG_ROW_NAMES]
+    dist_column_types = [float] * len(tc.tbi.DIST_TABLE_LABELS)
+    diff_column_types = [float] * len(tc.tbi.DIFF_TABLE_LABELS)
     info = dict()
     for tbl in sres:
         info[tbl] = {'row_names': [], 'col_types': []}
@@ -139,12 +139,12 @@ def run_nth_year_behresp_model(year_n, start_year,
     res = dict()
     for tbl in sres:
         if 'aggr' in tbl:
-            res_table = tbi.create_dict_table(sres[tbl],
-                                              row_names=info[tbl]['row_names'])
+            res_table = tc.tbi.create_dict_table(
+                sres[tbl], row_names=info[tbl]['row_names'])
             res[tbl] = dict((k, v[0]) for k, v in res_table.items())
         else:
             col_types_info = info[tbl]['col_types']
-            res[tbl] = tbi.create_dict_table(sres[tbl],
-                                             row_names=info[tbl]['row_names'],
-                                             column_types=col_types_info)
+            res[tbl] = tc.tbi.create_dict_table(
+                sres[tbl], row_names=info[tbl]['row_names'],
+                column_types=col_types_info)
     return res
