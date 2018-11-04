@@ -161,7 +161,7 @@ def response(calc_1, calc_2, behavior, trace=False):
         Computes marginal tax rates for Calculator objects calc__1 and calc__2
         for specified mtr_of income type and specified tax_type.
         """
-        assert tax_type == 'combined' or tax_type == 'iitax'
+        assert tax_type in ('combined', 'iitax')
         _, iitax1, combined1 = calc__1.mtr(mtr_of, wrt_full_compensation=True)
         _, iitax2, combined2 = calc__2.mtr(mtr_of, wrt_full_compensation=True)
         if tax_type == 'combined':
