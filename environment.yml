@@ -1,15 +1,6 @@
 name: behresp-dev
 channels:
-- ospc
+- OSPC
 dependencies:
 - python=3.6
-- "numpy>=1.13"
-- "pandas>=0.22"
 - taxcalc
-- pytest
-- pytest-pep8
-- pytest-xdist
-- pyyaml
-- pycodestyle
-- pylint
-- coverage

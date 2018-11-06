@@ -16,7 +16,7 @@ echo "BUILD-PREP..."
 
 # check version of conda package
 conda list conda | awk '$1=="conda"{v=$2;gsub(/\./,"",v);nv=v+0;if(nv<444)rc=1}END{exit(rc)}'
-if [ $? -eq 1 ]; then
+if [[ $? -eq 1 ]]; then
     echo "==> Installing conda 4.4.4+"
     conda install conda>=4.4.4 --yes 2>&1 > /dev/null
     echo "==> Continuing to build new behresp package"
@@ -24,16 +24,15 @@ fi
 
 # install conda-build package if not present
 conda list build | awk '$1~/conda-build/{rc=1}END{exit(rc)}'
-if [ $? -eq 0 ]; then
+if [[ $? -eq 0 ]]; then
     echo "==> Installing conda-build package"
     conda install conda-build --yes 2>&1 > /dev/null
     echo "==> Continuing to build new behresp package"
 fi
 
 # build behresp conda package for this version of Python
-NOHASH=--old-build-string
-pversion=3.6
-conda build $NOHASH --python $pversion . 2>&1 | awk '$1~/BUILD/||$1~/TEST/'
+OPTIONS="--old-build-string --python 3.6"
+conda build $OPTIONS . 2>&1 | awk '$1~/BUILD/||$1~/TEST/'
 
 # install behresp conda package
 echo "INSTALLATION..."
@@ -42,6 +41,8 @@ conda install behresp=0.0.0 --use-local --yes 2>&1 > /dev/null
 # NOTE: see https://github.com/conda/conda/issues/6520
 # NOTE: interim usage was as follows:
 # NOTE: conda install -c local behresp=0.0.0 --yes 2>&1 > /dev/null
+
+exit 0
 
 # clean-up after package build
 echo "CLEAN-UP..."
