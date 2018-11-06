@@ -42,8 +42,6 @@ conda install behresp=0.0.0 --use-local --yes 2>&1 > /dev/null
 # NOTE: interim usage was as follows:
 # NOTE: conda install -c local behresp=0.0.0 --yes 2>&1 > /dev/null
 
-exit 0
-
 # clean-up after package build
 echo "CLEAN-UP..."
 conda build purge 2> /dev/null
