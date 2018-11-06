@@ -4,6 +4,26 @@ Go [here](https://github.com/open-source-economics/Behavioral-Responses/pulls?q=
 for a complete commit history.
 
 
+2018-11-06 Release 0.3.0
+------------------------
+(last merged pull request is
+[#18](https://github.com/open-source-economics/Behavioral-Responses/pull/18))
+
+**API Changes**
+- Simplify specification of package dependencies
+  [[#18](https://github.com/open-source-economics/Behavioral-Responses/pull/18)
+  by Martin Holmer]
+
+**New Features**
+- None
+
+**Bug Fixes**
+- None
+
+
+_Earlier Releases:_
+
+
 2018-11-03 Release 0.2.0
 ------------------------
 (last merged pull request is
@@ -19,9 +39,6 @@ for a complete commit history.
 
 **Bug Fixes**
 - None
-
-
-_Earlier Releases:_
 
 
 2018-11-01 Release 0.1.0
