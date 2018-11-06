@@ -6,7 +6,7 @@
 
 # uninstall any existing behresp conda package
 conda list behresp | awk '$1~/behresp/{rc=1}END{exit(rc)}'
-if [ $? -eq 1 ]; then
+if [[ $? -eq 1 ]]; then
     conda uninstall behresp --yes 2>&1 > /dev/null
 fi
 
