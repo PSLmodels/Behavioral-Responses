@@ -67,10 +67,10 @@ _Earlier Releases:_
 [#11](https://github.com/open-source-economics/Behavioral-Responses/pull/11))
 
 **API Changes**
-- Copy Behavioral-Responses top-level files to Behavioral-Responses repo
+- Copy Tax-Calculator top-level files to Behavioral-Responses repo
   [[#2](https://github.com/open-source-economics/Behavioral-Responses/pull/2)
   by Martin Holmer]
-- Move Behavioral-Responses Behavior class logic/tests to Behavioral-Responses repo
+- Move Tax-Calculator Behavior class logic/tests to Behavioral-Responses repo
   [[#3](https://github.com/open-source-economics/Behavioral-Responses/pull/3)
   by Martin Holmer]
 - Streamline tests to use less memory
