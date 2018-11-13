@@ -4,6 +4,29 @@ Go [here](https://github.com/open-source-economics/Behavioral-Responses/pulls?q=
 for a complete commit history.
 
 
+2018-11-13 Release 0.4.0
+------------------------
+(last merged pull request is
+[#21](https://github.com/open-source-economics/Behavioral-Responses/pull/21))
+
+**API Changes**
+- Change documentation to state that Behavioral-Responses `behresp` packages are available **only** via the `PSLmodels` Anaconda Cloud channel
+  [[#20](https://github.com/open-source-economics/Tax-Calculator/pull/20)
+  by Martin Holmer]
+- Remove `versioneer.py` and `taxcalc/_version.py` and related code now that Package-Builder is handling version specification
+  [[#21](https://github.com/open-source-economics/Tax-Calculator/pull/21)
+  by Martin Holmer]
+
+**New Features**
+- None
+
+**Bug Fixes**
+- None
+
+
+_Earlier Releases:_
+
+
 2018-11-06 Release 0.3.0
 ------------------------
 (last merged pull request is
@@ -19,9 +42,6 @@ for a complete commit history.
 
 **Bug Fixes**
 - None
-
-
-_Earlier Releases:_
 
 
 2018-11-03 Release 0.2.0
