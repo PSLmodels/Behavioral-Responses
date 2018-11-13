@@ -1,6 +1,6 @@
 name: behresp-dev
 channels:
-- OSPC
+- PSLmodels
 dependencies:
 - python=3.6
 - taxcalc
