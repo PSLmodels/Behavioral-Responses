@@ -11,10 +11,10 @@ for a complete commit history.
 
 **API Changes**
 - Change documentation to state that Behavioral-Responses `behresp` packages are available **only** via the `PSLmodels` Anaconda Cloud channel
-  [[#20](https://github.com/open-source-economics/Tax-Calculator/pull/20)
+  [[#20](https://github.com/open-source-economics/Behavioral-Responses/pull/20)
   by Martin Holmer]
 - Remove `versioneer.py` and `taxcalc/_version.py` and related code now that Package-Builder is handling version specification
-  [[#21](https://github.com/open-source-economics/Tax-Calculator/pull/21)
+  [[#21](https://github.com/open-source-economics/Behavioral-Responses/pull/21)
   by Martin Holmer]
 
 **New Features**
@@ -67,10 +67,10 @@ _Earlier Releases:_
 [#11](https://github.com/open-source-economics/Behavioral-Responses/pull/11))
 
 **API Changes**
-- Copy Tax-Calculator top-level files to Behavioral-Responses repo
+- Copy Behavioral-Responses top-level files to Behavioral-Responses repo
   [[#2](https://github.com/open-source-economics/Behavioral-Responses/pull/2)
   by Martin Holmer]
-- Move Tax-Calculator Behavior class logic/tests to Behavioral-Responses repo
+- Move Behavioral-Responses Behavior class logic/tests to Behavioral-Responses repo
   [[#3](https://github.com/open-source-economics/Behavioral-Responses/pull/3)
   by Martin Holmer]
 - Streamline tests to use less memory
