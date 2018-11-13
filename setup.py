@@ -1,11 +1,3 @@
-import versioneer
-versioneer.VCS = 'git'
-versioneer.versionfile_source = 'behresp/_version.py'
-versioneer.versionfile_build = 'behresp/_version.py'
-versioneer.tag_prefix = ''  # tags are like 1.2.0
-versioneer.parentdir_prefix = 'behresp-'
-# above dirname like 'behresp-1.2.0'
-
 try:
     from setuptools import setup
 except ImportError:
@@ -14,8 +6,7 @@ except ImportError:
 with open('README.md') as f:
         longdesc = f.read()
 
-version = versioneer.get_version()
-cmdclass = versioneer.get_cmdclass()
+version = '0.0.0'
 
 config = {
     'description': 'Behavioral Responses',
@@ -24,7 +15,6 @@ config = {
     'description': 'behresp',
     'long_description': longdesc,
     'version': version,
-    'cmdclass': cmdclass,
     'license': 'CC0 1.0 Universal public domain dedication',
     'packages': ['behresp'],
     'include_package_data': True,
