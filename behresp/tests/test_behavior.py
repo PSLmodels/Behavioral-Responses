@@ -66,7 +66,7 @@ def test_response_function(cps_subsample):
     itax2x = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     del df1
     del df2
-    assert np.allclose([itax1x, itax2x], [1422.816, 1369.212])
+    assert np.allclose([itax1x, itax2x], [1422.156, 1368.489])
 
     # use old taxcalc Behavior class for y results
     behy_dict = tc.Calculator.read_json_assumptions(behy_json)
