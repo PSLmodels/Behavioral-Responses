@@ -4,11 +4,9 @@ package:
 
 requirements:
   build:
-    - python=3.6
     - taxcalc
 
   run:
-    - python=3.6
     - taxcalc
 
 test:
