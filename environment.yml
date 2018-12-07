@@ -2,4 +2,5 @@ name: behresp-dev
 channels:
 - PSLmodels
 dependencies:
+- python
 - taxcalc
