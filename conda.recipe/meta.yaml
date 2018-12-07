@@ -4,9 +4,11 @@ package:
 
 requirements:
   build:
+    - python
     - taxcalc
 
   run:
+    - python
     - taxcalc
 
 test:
@@ -14,4 +16,4 @@ test:
     - behresp
 
 about:
-  home: https://github.com/open-source-economics/Behavioral-Response
+  home: https://github.com/PSLmodels/Behavioral-Response

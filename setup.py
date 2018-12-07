@@ -10,8 +10,8 @@ version = '0.0.0'
 
 config = {
     'description': 'Behavioral Responses',
-    'url': 'https://github.com/open-source-economics/Behavioral-Responses',
-    'download_url': 'https://github.com/open-source-economics/Behavioral-Responses',
+    'url': 'https://github.com/PSLmodels/Behavioral-Responses',
+    'download_url': 'https://github.com/PSLmodels/Behavioral-Responses',
     'description': 'behresp',
     'long_description': longdesc,
     'version': version,

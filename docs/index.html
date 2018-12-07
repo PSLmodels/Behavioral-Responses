@@ -14,17 +14,17 @@ div { max-width: 19cm }
 <p>This document tells you how to use Behavioral-Responses, an
 open-source model in the Policy Simulation Library (PSL) collection of
 USA tax models.  You always use Behavioral-Responses in conjunction with
-<a href="https://open-source-economics.github.io/Tax-Calculator/">
+<a href="https://PSLmodels.github.io/Tax-Calculator/">
 Tax-Calculator</a>, the static-analysis model in the PSL collection of
 USA tax models, by writing and executing a Python script.  For an
 introduction to writing Python scripts using Tax-Calculator, read the
 tested recipes in our
-<a href="https://open-source-economics.github.io/Tax-Calculator/cookbook.html">
+<a href="https://PSLmodels.github.io/Tax-Calculator/cookbook.html">
 Tax-Calculator Cookbook</a>.  If you want to participate in the
 development of Behavioral-Responses &mdash; by asking a question,
 reporting a bug, improving the documentation or making an enhancement
 to the Python source code &mdash; you should go to
-the <a href="https://github.com/open-source-economics/Behavioral-Responses">
+the <a href="https://github.com/PSLmodels/Behavioral-Responses">
 developer website</a>.</p>
 
 <p>Please cite the source of your analysis as <q>Behavioral-Responses
@@ -44,7 +44,7 @@ that those materials are available upon request.</p>
 <h2 id="paramlogic">Response Parameters and Logic</h2>
 
 <p>The Behavioral-Responses parameters and logic are described in the
-<a href="https://github.com/open-source-economics/Behavioral-Responses/blob/master/behresp/behavior.py">
+<a href="https://github.com/PSLmodels/Behavioral-Responses/blob/master/behresp/behavior.py">
 behavior.py</a> file, where the parameters are defined in the
 <kbd>PARAM_INFO</kbd> dictionary, and the logic of how those parameters
 are used along with Tax-Calculator results is defined in the
@@ -53,7 +53,7 @@ are used along with Tax-Calculator results is defined in the
 <p>An interface to Behavioral-Responses for the
 <a href="https://www.ospc.org/taxbrain/">TaxBrain web application</a>
 is located in the
-<a href="https://github.com/open-source-economics/Behavioral-Responses/blob/master/behresp/tbi.py">
+<a href="https://github.com/PSLmodels/Behavioral-Responses/blob/master/behresp/tbi.py">
 tbi.py</a> file.  But this is of interest only to TaxBrain developers.</p>
 
 <p><a href="#doc">Back to Document Contents</a></p>
@@ -63,9 +63,9 @@ tbi.py</a> file.  But this is of interest only to TaxBrain developers.</p>
 
 <p>A tested recipe for using the Behavioral-Responses parameters and
 <kbd>response</kbd> function is contained in recipe 2 of the
-<a href="https://open-source-economics.github.io/Tax-Calculator/cookbook.html">
+<a href="https://PSLmodels.github.io/Tax-Calculator/cookbook.html">
 Tax-Calculator Cookbook</a> and in the <kbd>test_response_function</kbd> in the
-<a href="https://github.com/open-source-economics/Behavioral-Responses/blob/master/behresp/tests/test_behavior.py">
+<a href="https://github.com/PSLmodels/Behavioral-Responses/blob/master/behresp/tests/test_behavior.py">
 test_behavior.py</a> file.</p>
 
 <p>Notice that when writing a script like this you must import both
@@ -90,7 +90,7 @@ all filing units.  If you want to estimate responses where the value
 of the parameters vary across (say, earnings) groups, you can use the
 Tax-Calculator <kbd>quantity_response</kbd> function.  A recipe for
 doing this is contained in the
-<a href="https://open-source-economics.github.io/Tax-Calculator/cookbook.html">
+<a href="https://PSLmodels.github.io/Tax-Calculator/cookbook.html">
 Tax-Calculator Cookbook</a>.  That recipe simply estimates the
 responses.  But the techniques used in the Behavioral-Responses
 <kbd>response</kbd> function can be used to apply the estimated
