@@ -4,6 +4,23 @@ Go [here](https://github.com/PSLmodels/Behavioral-Responses/pulls?q=is%3Apr+is%3
 for a complete commit history.
 
 
+2018-12-13 Release 0.4.1
+------------------------
+(last merged pull request is
+[#33](https://github.com/PSLmodels/Behavioral-Responses/pull/33))
+
+**API Changes**
+- None
+
+**New Features**
+- Add GitHub Travis-CI testing under Python 3.7
+  [[#33](https://github.com/PSLmodels/Behavioral-Responses/pull/33)
+  by Martin Holmer]
+
+**Bug Fixes**
+- None
+
+
 2018-11-13 Release 0.4.0
 ------------------------
 (last merged pull request is
@@ -22,9 +39,6 @@ for a complete commit history.
 
 **Bug Fixes**
 - None
-
-
-_Earlier Releases:_
 
 
 2018-11-06 Release 0.3.0
