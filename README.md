@@ -1,5 +1,5 @@
 [![PSL cataloged](https://img.shields.io/badge/PSL-cataloged-a0a0a0.svg)](https://www.PSLmodels.org)
-[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![Python 3.6+](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Build Status](https://travis-ci.org/PSLmodels/Behavioral-Responses.svg?branch=master)](https://travis-ci.org/PSLmodels/Behavioral-Responses)
 [![Codecov](https://codecov.io/gh/PSLmodels/Behavioral-Responses/branch/master/graph/badge.svg)](https://codecov.io/gh/PSLmodels/Behavioral-Responses)
 

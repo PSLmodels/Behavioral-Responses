@@ -4,6 +4,23 @@ Go [here](https://github.com/PSLmodels/Behavioral-Responses/pulls?q=is%3Apr+is%3
 for a complete commit history.
 
 
+2018-12-14 Release 0.5.0
+------------------------
+(last merged pull request is
+[#35](https://github.com/PSLmodels/Behavioral-Responses/pull/35))
+
+**API Changes**
+- None
+
+**New Features**
+- Make behresp packages available for Python 3.7 as well as for Python 3.6
+  [[#35](https://github.com/PSLmodels/Behavioral-Responses/pull/35)
+  by Martin Holmer]
+
+**Bug Fixes**
+- None
+
+
 2018-12-13 Release 0.4.1
 ------------------------
 (last merged pull request is
