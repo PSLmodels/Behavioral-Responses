@@ -75,9 +75,9 @@ def response(calc_1, calc_2, behavior, trace=False):
 
     Note: the substitution effect here is calculated from a taxable income
       base that excludes long-term capital gains, since long-term capital
-      gains behavior may be modeled separately using the capital-gains 
+      gains behavior may be modeled separately using the capital-gains
       elasticity. You should consider this when applying estimates of the
-      elasticity of taxable income from the literature. 
+      elasticity of taxable income from the literature.
 
     Note: the nature of the capital-gains elasticity used here is similar
       to that used in Joint Committee on Taxation, "New Evidence on the
