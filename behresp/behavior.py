@@ -161,7 +161,7 @@ def response(calc_1, calc_2, behavior, trace=False):
         Computes marginal tax rates for Calculator objects calc__1 and calc__2
         for specified mtr_of income type and specified tax_type.
         """
-        assert tax_type in ('combined', 'iitax')
+        assert tax_type == 'combined' or tax_type == 'iitax'
         _, iitax1, combined1 = calc__1.mtr(mtr_of, wrt_full_compensation=True)
         _, iitax2, combined2 = calc__2.mtr(mtr_of, wrt_full_compensation=True)
         if tax_type == 'combined':
@@ -196,7 +196,9 @@ def response(calc_1, calc_2, behavior, trace=False):
             mtr2 = np.where(wage_mtr2 > mtr_cap, mtr_cap, wage_mtr2)
             pch = ((1. - mtr2) / (1. - mtr1)) - 1.
             # Note: c04800 is filing unit's taxable income
-            sub = (pvalue['BE_sub'] * pch * calc1.array('c04800'))
+            #  p23250 is filing units' long-term capital gains
+            taxinc_less_ltcg = calc1.array('c04800') - calc1.array('p23250')
+            sub = (pvalue['BE_sub'] * pch * taxinc_less_ltcg)
             if trace:
                 trace_output('wmtr1', wage_mtr1,
                              [-9e99, 0.00, 0.25, 0.50, 0.60,
@@ -213,7 +215,7 @@ def response(calc_1, calc_2, behavior, trace=False):
                               -0.00001, 0.00001,
                               0.10, 0.20, 0.50, 1.00, 9e99],
                              calc1.array('s006'),
-                             calc1.array('c04800'))
+                             taxinc_less_ltcg)
                 trace_output('sub', sub,
                              [-9e99, -1e3,
                               -0.1, 0.1,
