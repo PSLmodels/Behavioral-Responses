@@ -59,7 +59,7 @@ def test_response_function(cps_subsample):
     del pol
     calc1x.advance_to_year(refyear)
     calc2x.advance_to_year(refyear)
-    df1, df2 = response(calc1x, calc2x, behx_dict, trace=True)
+    df1, df2, _ = response(calc1x, calc2x, behx_dict, trace=True)
     del calc1x
     del calc2x
     itax1x = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
@@ -94,7 +94,7 @@ def test_response_function(cps_subsample):
     calc2x = tc.Calculator(records=rec, policy=pol)
     calc1x.advance_to_year(refyear)
     calc2x.advance_to_year(refyear)
-    df1, df2 = response(calc1x, calc2x, beh_dict)
+    df1, df2, _ = response(calc1x, calc2x, beh_dict)
     del calc1x
     del calc2x
     itax1n = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
@@ -120,7 +120,7 @@ def test_response_function(cps_subsample):
     del pol
     calc1x.advance_to_year(refyear)
     calc2x.advance_to_year(refyear)
-    df1, df2 = response(calc1x, calc2x, beh_dict, trace=True)
+    df1, df2, _ = response(calc1x, calc2x, beh_dict, trace=True)
     del calc1x
     del calc2x
     assert isinstance(df1, pd.DataFrame)
@@ -128,25 +128,24 @@ def test_response_function(cps_subsample):
     del df1
     del df2
 
-    # Ensure that a tax unit with only LTCG in 
-    # taxable income does not
-    # respond to regular tax rate changes
-    reform_wages = {2018: {'_II_rt7': [0.7]}}
-    beh_wages_json = """{
-    "BE_sub": {"2018": 0.25},
-    "BE_cg": {"2018": 0.0}
+    # Ensure that LTCG does not affect the total substitution effect
+    reform = {2018: {'_II_rt7': [0.7]}}
+    beh_json = """{
+    "BE_sub": {"2018": 0.25}
     }"""
-    rec_only_ltcg_inc = tc.Records(data=pd.read_csv('rec_only_ltcg_inc.csv'),
-                                   start_year=2018)
-    beh_dict = tc.Calculator.read_json_assumptions(beh_wages_json)
+    rec_w_wo_ltcg = tc.Records(data=pd.read_csv('rec_w_wo_ltcg.csv'),
+                                                start_year=2018)
+    beh_dict = tc.Calculator.read_json_assumptions(beh_json)
     pol = tc.Policy()
-    calc1x = tc.Calculator(records=rec_only_ltcg_inc, policy=pol)
+    calc1x = tc.Calculator(records=rec_w_wo_ltcg, policy=pol)
     pol.implement_reform(reform)
-    calc2x = tc.Calculator(records=rec_only_ltcg_inc, policy=pol)
+    calc2x = tc.Calculator(records=rec_w_wo_ltcg, policy=pol)
     del pol
-    df1, df2 = response(calc1x, calc2x, beh_dict, trace=True)
+    df1, df2, calc_2_beh = response(calc1x, calc2x, beh_dict, trace=True)
     del calc1x
     del calc2x
-    assert df2['c04800'][0] == df1['c04800'][0]
+    assert calc_2_beh.array('c04800')[0] == (calc_2_beh.array('c04800')[1] +
+                                             500000)
     del df1
     del df2
+    del _

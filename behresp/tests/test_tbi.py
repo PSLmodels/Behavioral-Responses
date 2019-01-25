@@ -73,9 +73,10 @@ def test_behavioral_response(cps_subsample):
                 calc2 = tc.Calculator(policy=pol, records=rec)
                 calc1.advance_to_year(cyr)
                 calc2.advance_to_year(cyr)
-                df1, df2 = response(calc1, calc2, beh_dict)
+                df1, df2, _ = response(calc1, calc2, beh_dict)
                 del calc1
                 del calc2
+                del _
                 std_res[cyr] = dict()
                 wgt = df1['s006']
                 for tbl in ['aggr_1', 'aggr_2', 'aggr_d']:
