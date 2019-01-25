@@ -127,3 +127,26 @@ def test_response_function(cps_subsample):
     assert isinstance(df2, pd.DataFrame)
     del df1
     del df2
+
+    # Ensure that a tax unit with only LTCG in 
+    # taxable income does not
+    # respond to regular tax rate changes
+    reform_wages = {2018: {'_II_rt7': [0.7]}}
+    beh_wages_json = """{
+    "BE_sub": {"2018": 0.25},
+    "BE_cg": {"2018": 0.0}
+    }"""
+    rec_only_ltcg_inc = tc.Records(data=pd.read_csv('rec_only_ltcg_inc.csv'),
+                                   start_year=2018)
+    beh_dict = tc.Calculator.read_json_assumptions(beh_wages_json)
+    pol = tc.Policy()
+    calc1x = tc.Calculator(records=rec_only_ltcg_inc, policy=pol)
+    pol.implement_reform(reform)
+    calc2x = tc.Calculator(records=rec_only_ltcg_inc, policy=pol)
+    del pol
+    df1, df2 = response(calc1x, calc2x, beh_dict, trace=True)
+    del calc1x
+    del calc2x
+    assert df2['c04800'][0] == df1['c04800'][0]
+    del df1
+    del df2
