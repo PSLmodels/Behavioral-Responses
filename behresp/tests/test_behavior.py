@@ -134,7 +134,7 @@ def test_response_function(cps_subsample):
     "BE_sub": {"2018": 0.25}
     }"""
     rec_w_wo_ltcg = tc.Records(data=pd.read_csv('rec_w_wo_ltcg.csv'),
-                                                start_year=2018)
+                               start_year=2018)
     beh_dict = tc.Calculator.read_json_assumptions(beh_json)
     pol = tc.Policy()
     calc1x = tc.Calculator(records=rec_w_wo_ltcg, policy=pol)

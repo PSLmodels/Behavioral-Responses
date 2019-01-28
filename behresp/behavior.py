@@ -268,6 +268,5 @@ def response(calc_1, calc_2, behavior, trace=False):
     calc2_behv.calc_all()
     # Extract dataframe from calc2_behv
     df2 = calc2_behv.distribution_table_dataframe()
-    
     # Return the two dataframes and calc
     return (df1, df2, calc2_behv)
