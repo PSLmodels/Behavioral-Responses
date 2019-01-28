@@ -135,7 +135,7 @@ def test_response_function(cps_subsample, tests_path):
     "BE_sub": {"2018": 0.25}
     }"""
 
-    rec_w_wo_ltcg_path = os.path.join(tests_path, 'rec_w_wo_ltcg.csv') 
+    rec_w_wo_ltcg_path = os.path.join(tests_path, 'rec_w_wo_ltcg.csv')
 
     rec_w_wo_ltcg = tc.Records(data=pd.read_csv(rec_w_wo_ltcg_path),
                                start_year=2018)
