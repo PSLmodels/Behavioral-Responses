@@ -73,6 +73,12 @@ def response(calc_1, calc_2, behavior, trace=False):
       implications", Journal of Public Economics 84:1-32 (2002) [see
       equation 2 on page 10].
 
+    Note: the substitution effect here is calculated from a taxable income
+      base that excludes long-term capital gains, since long-term capital
+      gains behavior may be modeled separately using the capital-gains
+      elasticity. You should consider this when applying estimates of the
+      elasticity of taxable income from the literature.
+
     Note: the nature of the capital-gains elasticity used here is similar
       to that used in Joint Committee on Taxation, "New Evidence on the
       Tax Elasticity of Capital Gains: A Joint Working Paper of the Staff
@@ -196,7 +202,9 @@ def response(calc_1, calc_2, behavior, trace=False):
             mtr2 = np.where(wage_mtr2 > mtr_cap, mtr_cap, wage_mtr2)
             pch = ((1. - mtr2) / (1. - mtr1)) - 1.
             # Note: c04800 is filing unit's taxable income
-            sub = (pvalue['BE_sub'] * pch * calc1.array('c04800'))
+            #  p23250 is filing units' long-term capital gains
+            taxinc_less_ltcg = calc1.array('c04800') - calc1.array('p23250')
+            sub = (pvalue['BE_sub'] * pch * taxinc_less_ltcg)
             if trace:
                 trace_output('wmtr1', wage_mtr1,
                              [-9e99, 0.00, 0.25, 0.50, 0.60,
@@ -213,7 +221,7 @@ def response(calc_1, calc_2, behavior, trace=False):
                               -0.00001, 0.00001,
                               0.10, 0.20, 0.50, 1.00, 9e99],
                              calc1.array('s006'),
-                             calc1.array('c04800'))
+                             taxinc_less_ltcg)
                 trace_output('sub', sub,
                              [-9e99, -1e3,
                               -0.1, 0.1,
