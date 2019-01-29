@@ -264,11 +264,6 @@ def response(calc_1, calc_2, behavior, trace=False):
     calc2_behv.calc_all()
     # Extract dataframe from calc2_behv
     df2 = calc2_behv.distribution_table_dataframe()
-<<<<<<< HEAD
-    # Return the two dataframes and calc
-    return (df1, df2, calc2_behv)
-=======
     del calc2_behv
     # Return the two dataframes
     return (df1, df2)
->>>>>>> parent of 828d1d3... revise test for ltcg and add calc output to response()

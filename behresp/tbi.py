@@ -58,12 +58,11 @@ def run_nth_year_behresp_model(year_n, start_year,
                                       user_mods)
 
     # extractf unfuzzed raw results from calc1 and calc2-with-response
-    dv1, dv2, _ = response(calc1, calc2, behavior)
+    dv1, dv2 = response(calc1, calc2, behavior)
 
     # delete calc1 and calc2 now that raw results have been extracted
     del calc1
     del calc2
-    del _
 
     # construct TaxBrain summary results from raw results
     sres = dict()
