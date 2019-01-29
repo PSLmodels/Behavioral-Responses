@@ -128,28 +128,3 @@ def test_response_function(cps_subsample, tests_path):
     assert isinstance(df2, pd.DataFrame)
     del df1
     del df2
-
-    # Ensure that LTCG does not affect the total substitution effect
-    reform = {2018: {'_II_rt7': [0.7]}}
-    beh_json = """{
-    "BE_sub": {"2018": 0.25}
-    }"""
-
-    rec_w_wo_ltcg_path = os.path.join(tests_path, 'rec_w_wo_ltcg.csv')
-
-    rec_w_wo_ltcg = tc.Records(data=pd.read_csv(rec_w_wo_ltcg_path),
-                               start_year=2018)
-    beh_dict = tc.Calculator.read_json_assumptions(beh_json)
-    pol = tc.Policy()
-    calc1x = tc.Calculator(records=rec_w_wo_ltcg, policy=pol)
-    pol.implement_reform(reform)
-    calc2x = tc.Calculator(records=rec_w_wo_ltcg, policy=pol)
-    del pol
-    df1, df2, calc_2_beh = response(calc1x, calc2x, beh_dict, trace=True)
-    del calc1x
-    del calc2x
-    assert calc_2_beh.array('c04800')[0] == (calc_2_beh.array('c04800')[1] +
-                                             500000)
-    del df1
-    del df2
-    del _
