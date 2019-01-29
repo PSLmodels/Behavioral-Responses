@@ -60,7 +60,7 @@ def test_response_function(cps_subsample, tests_path):
     del pol
     calc1x.advance_to_year(refyear)
     calc2x.advance_to_year(refyear)
-    df1, df2, _ = response(calc1x, calc2x, behx_dict, trace=True)
+    df1, df2 = response(calc1x, calc2x, behx_dict, trace=True)
     del calc1x
     del calc2x
     itax1x = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
@@ -95,7 +95,7 @@ def test_response_function(cps_subsample, tests_path):
     calc2x = tc.Calculator(records=rec, policy=pol)
     calc1x.advance_to_year(refyear)
     calc2x.advance_to_year(refyear)
-    df1, df2, _ = response(calc1x, calc2x, beh_dict)
+    df1, df2 = response(calc1x, calc2x, beh_dict)
     del calc1x
     del calc2x
     itax1n = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
@@ -121,7 +121,7 @@ def test_response_function(cps_subsample, tests_path):
     del pol
     calc1x.advance_to_year(refyear)
     calc2x.advance_to_year(refyear)
-    df1, df2, _ = response(calc1x, calc2x, beh_dict, trace=True)
+    df1, df2 = response(calc1x, calc2x, beh_dict, trace=True)
     del calc1x
     del calc2x
     assert isinstance(df1, pd.DataFrame)

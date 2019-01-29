@@ -49,14 +49,10 @@ PARAM_INFO = {
 def response(calc_1, calc_2, behavior, trace=False):
     """
     Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
-    returning results as a tuple of distribution table dataframes and
-    a calculator (df1, df2, calc_2_beh)
+    returning results as a tuple of distribution table dataframes (df1, df2)
     where:
     df1 is extracted from a baseline-policy calc_1 copy, and
     df2 is extracted from a reform-policy calc_2 copy that incorporates the
-        behavioral responses given by the nature of the baseline-to-reform
-        change in policy and elasticities in the specified behavior dictionary.
-    calc_2_beh is the reform-policy calc_2 copy that incorporates the
         behavioral responses given by the nature of the baseline-to-reform
         change in policy and elasticities in the specified behavior dictionary.
 
@@ -268,5 +264,11 @@ def response(calc_1, calc_2, behavior, trace=False):
     calc2_behv.calc_all()
     # Extract dataframe from calc2_behv
     df2 = calc2_behv.distribution_table_dataframe()
+<<<<<<< HEAD
     # Return the two dataframes and calc
     return (df1, df2, calc2_behv)
+=======
+    del calc2_behv
+    # Return the two dataframes
+    return (df1, df2)
+>>>>>>> parent of 828d1d3... revise test for ltcg and add calc output to response()
