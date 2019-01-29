@@ -5,7 +5,7 @@ Tests for functions in behavior.py file.
 # pycodestyle test_behavior.py
 # pylint --disable=locally-disabled test_behavior.py
 
-import os 
+import os
 import numpy as np
 import pandas as pd
 import taxcalc as tc
