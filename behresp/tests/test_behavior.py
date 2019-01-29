@@ -5,7 +5,6 @@ Tests for functions in behavior.py file.
 # pycodestyle test_behavior.py
 # pylint --disable=locally-disabled test_behavior.py
 
-import os
 import numpy as np
 import pandas as pd
 import taxcalc as tc
@@ -29,7 +28,7 @@ def test_param_info():
         assert pdict['default_value'] <= pdict['maximum_value']
 
 
-def test_response_function(cps_subsample, tests_path):
+def test_response_function(cps_subsample):
     """
     Test response function.
     """
