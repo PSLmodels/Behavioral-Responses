@@ -46,11 +46,10 @@ PARAM_INFO = {
 }
 
 
-def response(calc_1, calc_2, behavior, trace=False):
+def response(calc_1, calc_2, behavior, dump=False):
     """
     Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
-    returning results as a tuple of distribution table dataframes (df1, df2)
-    where:
+    returning results as a tuple of Pandas DataFrame objects (df1, df2) where:
     df1 is extracted from a baseline-policy calc_1 copy, and
     df2 is extracted from a reform-policy calc_2 copy that incorporates the
         behavioral responses given by the nature of the baseline-to-reform
@@ -64,6 +63,19 @@ def response(calc_1, calc_2, behavior, trace=False):
 
     The behavior argument is a dictionary returned from the Tax-Calculator
     Calculator.read_json_assumptions method.
+
+    The optional dump argument controls the number of variables included
+    in the two returned DataFrame objects.  When dump=False (its default
+    value), the variables in the two returned DataFrame objects include
+    just the variables in the Tax-Calculator DIST_VARIABLES list, which
+    is sufficient for constructing the standard Tax-Calculator tables.
+    When dump=True, the variables in the two returned DataFrame objects
+    include all the Tax-Calculator input and calculated output variables,
+    which is the same output as produced by the Tax-Calculator tc --dump
+    option except for one difference: the tc --dump option provides two
+    calculated variables, mtr_inctax and mtr_paytax, that are replaced
+    in the dump output of this response function by mtr_combined, which
+    is the sum of mtr_inctax and mtr_paytax.
 
     Note: the use here of a dollar-change income elasticity (rather than
       a proportional-change elasticity) is consistent with Feldstein and
@@ -98,7 +110,7 @@ def response(calc_1, calc_2, behavior, trace=False):
       Using this function, a semi-elasticity of -3.45 corresponds to a tax
       rate elasticity of -0.792.
     """
-    # pylint: disable=too-many-locals,too-many-statements
+    # pylint: disable=too-many-locals,too-many-statements,too-many-branches
 
     calc1 = copy.deepcopy(calc_1)
     calc2 = copy.deepcopy(calc_2)
@@ -107,24 +119,6 @@ def response(calc_1, calc_2, behavior, trace=False):
     assert isinstance(behavior, dict)
 
     # Begin nested functions used only in this response function
-    def trace_output(varname, variable, histbins, pweight, dweight):
-        """
-        Print trace output for specified variable.
-        """
-        print('*** TRACE for variable {}'.format(varname))
-        hist = np.histogram(variable, bins=histbins)
-        print('*** Histogram:')
-        print(hist[0])
-        print(hist[1])
-        if pweight.sum() != 0:
-            out = '*** Person-weighted mean= {:.2f}'
-            mean = (variable * pweight).sum() / pweight.sum()
-            print(out.format(mean))
-        if dweight.sum() != 0:
-            out = '*** Dollar-weighted mean= {:.2f}'
-            mean = (variable * dweight).sum() / dweight.sum()
-            print(out.format(mean))
-
     def _update_ordinary_income(taxinc_change, calc):
         """
         Implement total taxable income change induced by behavioral response.
@@ -183,9 +177,14 @@ def response(calc_1, calc_2, behavior, trace=False):
     pvalue = tc.Parameters.param_dict_for_year(calc1.current_year,
                                                behavior, PARAM_INFO)
     mtr_cap = 0.99
+    if dump:
+        dvars = list(tc.Records.USABLE_READ_VARS | tc.Records.CALCULATED_VARS)
     # Calculate sum of substitution and income effects
     if pvalue['BE_sub'] == 0.0 and pvalue['BE_inc'] == 0.0:
         zero_sub_and_inc = True
+        if dump:
+            wage_mtr1 = np.zeros(calc1.array_len)
+            wage_mtr2 = np.zeros(calc2.array_len)
     else:
         zero_sub_and_inc = False
         # calculate marginal combined tax rates on taxpayer wages+salary
@@ -201,33 +200,10 @@ def response(calc_1, calc_2, behavior, trace=False):
             mtr1 = np.where(wage_mtr1 > mtr_cap, mtr_cap, wage_mtr1)
             mtr2 = np.where(wage_mtr2 > mtr_cap, mtr_cap, wage_mtr2)
             pch = ((1. - mtr2) / (1. - mtr1)) - 1.
-            # Note: c04800 is filing unit's taxable income
-            #  p23250 is filing units' long-term capital gains
+            # Note: c04800 is filing unit's taxable income and
+            #       p23250 is filing units' long-term capital gains
             taxinc_less_ltcg = calc1.array('c04800') - calc1.array('p23250')
             sub = (pvalue['BE_sub'] * pch * taxinc_less_ltcg)
-            if trace:
-                trace_output('wmtr1', wage_mtr1,
-                             [-9e99, 0.00, 0.25, 0.50, 0.60,
-                              0.70, 0.80, 0.90, 0.999999, 1.1,
-                              1.2, 1.3, 9e99],
-                             calc1.array('s006'),
-                             np.zeros(calc1.array_len))
-                print('high wage_mtr1:',
-                      wage_mtr1[wage_mtr1 > 0.999999])
-                print('wage_mtr2 them:',
-                      wage_mtr2[wage_mtr1 > 0.999999])
-                trace_output('pch', pch,
-                             [-9e99, -1.00, -0.50, -0.20, -0.10,
-                              -0.00001, 0.00001,
-                              0.10, 0.20, 0.50, 1.00, 9e99],
-                             calc1.array('s006'),
-                             taxinc_less_ltcg)
-                trace_output('sub', sub,
-                             [-9e99, -1e3,
-                              -0.1, 0.1,
-                              1e3, 1e4, 1e5, 1e6, 9e99],
-                             calc1.array('s006'),
-                             np.zeros(calc1.array_len))
         # calculate magnitude of income effect
         if pvalue['BE_inc'] == 0.0:
             inc = np.zeros(calc1.array_len)
@@ -252,7 +228,13 @@ def response(calc_1, calc_2, behavior, trace=False):
         new_ltcg = calc1.array('p23250') * exp_term
         ltcg_chg = new_ltcg - calc1.array('p23250')
     # Extract dataframe from calc1
-    df1 = calc1.distribution_table_dataframe()
+    if dump:
+        df1 = calc1.dataframe(dvars)
+        df1.drop('mtr_inctax', axis='columns', inplace=True)
+        df1.drop('mtr_paytax', axis='columns', inplace=True)
+        df1['mtr_combined'] = wage_mtr1 * 100
+    else:
+        df1 = calc1.distribution_table_dataframe()
     del calc1
     # Add behavioral-response changes to income sources
     calc2_behv = copy.deepcopy(calc2)
@@ -263,7 +245,13 @@ def response(calc_1, calc_2, behavior, trace=False):
     # Recalculate post-reform taxes incorporating behavioral responses
     calc2_behv.calc_all()
     # Extract dataframe from calc2_behv
-    df2 = calc2_behv.distribution_table_dataframe()
+    if dump:
+        df2 = calc2_behv.dataframe(dvars)
+        df2.drop('mtr_inctax', axis='columns', inplace=True)
+        df2.drop('mtr_paytax', axis='columns', inplace=True)
+        df2['mtr_combined'] = wage_mtr2 * 100
+    else:
+        df2 = calc2_behv.distribution_table_dataframe()
     del calc2_behv
     # Return the two dataframes
     return (df1, df2)
