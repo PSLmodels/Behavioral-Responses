@@ -55,7 +55,7 @@ def test_default_response_function(cps_subsample):
     itax2s = round((df2s['iitax'] * df2s['s006']).sum() * 1e-9, 3)
     # ... calculate aggregate inctax using default behavior assumptions
     default_beh_dict = tc.Calculator.read_json_assumptions('{}')
-    _, df2d = response(calc1, calc2d, default_beh_dict)
+    _, df2d = response(calc1, calc2d, default_beh_dict, dump=True)
     itax2d = round((df2d['iitax'] * df2d['s006']).sum() * 1e-9, 3)
     assert np.allclose(itax2d, itax2s)
     # ... clean up
@@ -147,10 +147,10 @@ def test_sub_effect_independence():
     # specify input consisting of two filing units with high earnings, but
     # with one having large long-term capital gains and the other having
     # no long-term capital gains
-    input_recs = (u'RECID,MARS,e00200,e00200p,p23250\n'
-                  u'1,1,1000000,1000000,500000\n'
-                  u'2,1,1000000,1000000,0\n')
-    recs = tc.Records(data=pd.read_csv(StringIO(input_recs)),
+    input_csv = (u'RECID,MARS,e00200,e00200p,p23250\n'
+                 u'1,1,1000000,1000000,500000\n'
+                 u'2,1,1000000,1000000,0\n')
+    recs = tc.Records(data=pd.read_csv(StringIO(input_csv)),
                       start_year=refyear,
                       gfactors=None, weights=None)
     beh_dict = tc.Calculator.read_json_assumptions(beh_json)
