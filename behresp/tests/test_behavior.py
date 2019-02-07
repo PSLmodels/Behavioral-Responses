@@ -148,8 +148,9 @@ def test_sub_effect_independence():
     # with one having large long-term capital gains and the other having
     # no long-term capital gains
     input_csv = (u'RECID,MARS,e00200,e00200p,p23250\n'
-                 u'1,1,1000000,1000000,500000\n'
-                 u'2,1,1000000,1000000,0\n')
+                 u'1,1,1000000,1000000,0     \n'
+                 u'2,1,1000000,1000000,500000\n'
+                 u'3,1,1000000,1000000,-50000\n')
     recs = tc.Records(data=pd.read_csv(StringIO(input_csv)),
                       start_year=refyear,
                       gfactors=None, weights=None)
@@ -164,15 +165,19 @@ def test_sub_effect_independence():
     df1, df2 = response(calc1, calc2, beh_dict)
     del calc1
     del calc2
-    # compute change in taxable income for each of the two filing units
+    # compute change in taxable income for each of the three filing units
     chg_funit1 = df2['c04800'][0] - df1['c04800'][0]  # funit with RECID=1
     chg_funit2 = df2['c04800'][1] - df1['c04800'][1]  # funit with RECID=2
+    chg_funit3 = df2['c04800'][2] - df1['c04800'][2]  # funit with RECID=3
     del df1
     del df2
     # confirm reform reduces taxable income when assuming substitution effect
     assert chg_funit1 < 0
     assert chg_funit2 < 0
-    # confirm change in taxable income is same for the two filing units
-    assert np.allclose(chg_funit1, chg_funit2)
+    assert chg_funit3 < 0
+    # confirm change in taxable income is same for all three filing units
+    assert np.allclose(chg_funit2, chg_funit1)
+    assert np.allclose(chg_funit3, chg_funit1)
     del chg_funit1
     del chg_funit2
+    del chg_funit3
