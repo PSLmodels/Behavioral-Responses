@@ -62,7 +62,7 @@ def response(calc_1, calc_2, behavior, dump=False):
       And neither calc_1 nor calc_2 are affected by this response function.
 
     The behavior argument is a dictionary returned from the Tax-Calculator
-    Calculator.read_json_assumptions method.
+    Calculator.read_json_parameters method.
 
     The optional dump argument controls the number of variables included
     in the two returned DataFrame objects.  When dump=False (its default

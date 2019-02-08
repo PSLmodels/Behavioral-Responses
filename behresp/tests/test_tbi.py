@@ -9,16 +9,16 @@ import numpy as np
 import pandas as pd
 import pytest
 import taxcalc as tc
-from behresp import assumption_errors, run_nth_year_behresp_model, response
+from behresp import parameter_errors, run_nth_year_behresp_model, response
 
 
-def test_assumption_errors():
+def test_parameter_errors():
     """
-    Test assumption_error function.
+    Test parameter_errors function.
     """
     behv_json = '{"BE_sub": {"2018": -0.25}}'
-    behv_dict = tc.Calculator.read_json_assumptions(behv_json)
-    errmsg = assumption_errors(behv_dict, 2013, 10)
+    behv_dict = tc.Calculator.read_json_parameters(behv_json)
+    errmsg = parameter_errors(behv_dict, 2013, 10)
     assert errmsg
 
 
@@ -33,7 +33,7 @@ def test_behavioral_response(cps_subsample):
     reform_json = '{"policy": {"_II_em": {"2020": [1500]}}}'
     params = tc.Calculator.read_json_param_objects(reform_json, None)
     beh_json = '{"BE_sub": {"2013": 0.25}}'
-    beh_dict = tc.Calculator.read_json_assumptions(beh_json)
+    beh_dict = tc.Calculator.read_json_parameters(beh_json)
     # specify keyword arguments used in tbi function call
     kwargs = {
         'start_year': 2019,
@@ -42,11 +42,9 @@ def test_behavioral_response(cps_subsample):
         'use_full_sample': False,
         'user_mods': {
             'policy': params['policy'],
-            'behavior': dict(),
             'growdiff_baseline': params['growdiff_baseline'],
             'growdiff_response': params['growdiff_response'],
-            'consumption': params['consumption'],
-            'growmodel': params['growmodel']
+            'consumption': params['consumption']
         },
         'behavior': beh_dict,
         'return_dict': False
@@ -139,7 +137,7 @@ def test_fuzzing_and_returning_dict():
     reform_json = '{"policy": {"_II_em": {"2020": [1500]}}}'
     params = tc.Calculator.read_json_param_objects(reform_json, None)
     beh_json = '{"BE_sub": {"2013": 0.25}}'
-    beh_dict = tc.Calculator.read_json_assumptions(beh_json)
+    beh_dict = tc.Calculator.read_json_parameters(beh_json)
     # specify keyword arguments used in tbi function call
     kwargs = {
         'start_year': 2020,
@@ -148,11 +146,9 @@ def test_fuzzing_and_returning_dict():
         'use_full_sample': False,
         'user_mods': {
             'policy': params['policy'],
-            'behavior': dict(),
             'growdiff_baseline': params['growdiff_baseline'],
             'growdiff_response': params['growdiff_response'],
-            'consumption': params['consumption'],
-            'growmodel': params['growmodel']
+            'consumption': params['consumption']
         },
         'behavior': beh_dict,
         'return_dict': True
