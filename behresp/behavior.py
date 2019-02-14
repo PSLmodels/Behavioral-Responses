@@ -203,7 +203,8 @@ def response(calc_1, calc_2, behavior, dump=False):
             # Note: c04800 is filing unit's taxable income and
             #       p23250 is filing units' long-term capital gains
             taxinc_less_ltcg = (calc1.array('c04800') -
-                                np.maximum(-3000, calc1.array('p23250')))
+                                np.maximum(-3000/calc1.array('sep'),
+                                           calc1.array('p23250')))
             sub = (pvalue['BE_sub'] * pch * taxinc_less_ltcg)
         # calculate magnitude of income effect
         if pvalue['BE_inc'] == 0.0:
