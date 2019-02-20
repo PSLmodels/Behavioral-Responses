@@ -144,12 +144,18 @@ def test_sub_effect_independence():
     beh_json = """{
     "BE_sub": {"2013": 0.25}
     }"""
-    # specify input consisting of two filing units with high earnings, but
-    # with one having large long-term capital gains and the other having
-    # no long-term capital gains
-    input_csv = (u'RECID,MARS,e00200,e00200p,p23250\n'
-                 u'1,1,1000000,1000000,500000\n'
-                 u'2,1,1000000,1000000,0\n')
+    # specify high earning filing units with important charachteristics:
+    # Single without long-term capital gains
+    # Single with long-term capital gains
+    # Single with long-term capital loss
+    # Married filing separately with long-term capital loss
+    # Single with long-term capital loss and short-term capital loss
+    input_csv = (u'RECID,MARS,e00200,e00200p,p23250,p22250\n'
+                 u'1,1,1000000,1000000,0,0     \n'
+                 u'2,1,1000000,1000000,500000,0\n'
+                 u'3,1,1000000,1000000,-50000,0\n'
+                 u'4,3,1000000,1000000,-50000,0\n'
+                 u'5,1,1000000,1000000,-4000,-2000\n')
     recs = tc.Records(data=pd.read_csv(StringIO(input_csv)),
                       start_year=refyear,
                       gfactors=None, weights=None)
@@ -164,18 +170,30 @@ def test_sub_effect_independence():
     df1, df2 = response(calc1, calc2, beh_dict)
     del calc1
     del calc2
-    # compute change in taxable income for each of the two filing units
+    # compute change in taxable income for each of the filing units
     chg_funit1 = df2['c04800'][0] - df1['c04800'][0]  # funit with RECID=1
     chg_funit2 = df2['c04800'][1] - df1['c04800'][1]  # funit with RECID=2
+    chg_funit3 = df2['c04800'][2] - df1['c04800'][2]  # funit with RECID=3
+    chg_funit4 = df2['c04800'][3] - df1['c04800'][3]  # funit with RECID=4
+    chg_funit5 = df2['c04800'][4] - df1['c04800'][4]  # funit with RECID=5
     del df1
     del df2
     # confirm reform reduces taxable income when assuming substitution effect
     assert chg_funit1 < 0
     assert chg_funit2 < 0
-    # confirm change in taxable income is same for the two filing units
-    assert np.allclose(chg_funit1, chg_funit2)
+    assert chg_funit3 < 0
+    assert chg_funit4 < 0
+    assert chg_funit5 < 0
+    # confirm change in taxable income is same for all filing units
+    assert np.allclose(chg_funit2, chg_funit1)
+    assert np.allclose(chg_funit3, chg_funit1)
+    assert np.allclose(chg_funit4, chg_funit1)
+    assert np.allclose(chg_funit5, chg_funit1)
     del chg_funit1
     del chg_funit2
+    del chg_funit3
+    del chg_funit4
+    del chg_funit5
 
 
 def test_quantity_response():
