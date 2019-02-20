@@ -4,26 +4,35 @@
 [![Codecov](https://codecov.io/gh/PSLmodels/Behavioral-Responses/branch/master/graph/badge.svg)](https://codecov.io/gh/PSLmodels/Behavioral-Responses)
 
 
-Developing Behavioral-Responses
-===============================
+Behavioral-Responses
+====================
 
-This document tells you how to begin contributing to
-Behavioral-Responses by reporting a bug, improving the documentation,
-or making an enhancement to the Python source code.  If you only want
-to **use** Behavioral-Responses, you should begin by reading the [user
-documentation](https://PSLmodels.github.io/Behavioral-Responses/)
-that describes how to write Python scripts that use
-Behavioral-Responses on your own computer.
+This document tells you how to begin using or contributing to
+Behavioral-Responses.  Begin by reading the [Tax-Calculator user
+guide](https://PSLmodels.github.io/Tax-Calculator/) and then the
+[Behavioral-Responses user
+guide](https://PSLmodels.github.io/Behavioral-Responses/) that
+describes how to write Python scripts that use Behavioral-Responses
+together with Tax-Calculator on your own computer.
 
 
 What is Behavioral-Responses?
 -----------------------------
 
-Behavioral-Responses, which is part of the Policy Simulation Library (PSL)
-collection of USA tax models, estimates partial-equilibrium behavioral
-responses to changes in the US federal individual income and payroll
-tax system as simulated by
-[Tax-Calculator](https://github.com/PSLmodels/Tax-Calculator)
+Behavioral-Responses, which is part of the Policy Simulation Library
+(PSL) collection of USA tax models, estimates partial-equilibrium
+behavioral responses to changes in the US federal individual income
+and payroll tax system as simulated by
+[Tax-Calculator](https://github.com/PSLmodels/Tax-Calculator).  It
+provides two ways of doing this: (1) the `response` function, which
+contains higher-level logic that supports the TaxBrain "Partial
+Equilibrium Simulation" capability and requires specification of only
+the elasticities, and (2) the `quantity_response` function, which
+contains lower-level logic that requires specification of the quantity
+whose response is to be estimated, requires specification of the
+marginal tax rates and elasticities to be used in the response
+calculation, and allows the response estimation to be conducted by
+subgroup with different elasticities for each subgroup.
 
 
 Disclaimer
@@ -49,11 +58,11 @@ If you want to **request an enhancement**, create a new issue
 providing details on what you think should be added to Behavioral-Responses.
 
 If you want to **propose code changes**, follow the directions in the
-[Tax-Calculator Contributor
-Guide](https://taxcalc.readthedocs.io/en/latest/contributor_guide.html)
+[Tax-Calculator contributor
+guide](https://github.com/PSLmodels/Tax-Calculator/blob/master/CONTRIBUTING.md#tax-calculator-contributor-guide)
 on how to fork and clone the Behavioral-Responses git repository.
 Before developing any code changes be sure to read completely the
-Tax-Calculator Contributor Guide and then read about the
+Tax-Calculator contributor guide and then read about the
 [Tax-Calculator pull-request
 workflow](https://github.com/PSLmodels/Tax-Calculator/blob/master/WORKFLOW.md#tax-calculator-pull-request-workflow).
 When reading both documents, be sure to mentally substitute
@@ -73,6 +82,6 @@ release #.#.#, author's calculations." If you wish to link to
 Behavioral-Responses,
 https://PSLmodels.github.io/Behavioral-Responses/ is preferred.
 Additionally, we strongly recommend that you describe the
-elasticity assumptions used, and provide a link to the materials
+elasticity parameters used, and provide a link to the materials
 required to replicate your analysis or, at least, note that those
 materials are available upon request.

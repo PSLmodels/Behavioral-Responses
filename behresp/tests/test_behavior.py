@@ -9,7 +9,7 @@ from io import StringIO
 import numpy as np
 import pandas as pd
 import taxcalc as tc
-from behresp import PARAM_INFO, response
+from behresp import PARAM_INFO, response, quantity_response
 
 
 def test_param_info():
@@ -194,3 +194,27 @@ def test_sub_effect_independence():
     del chg_funit3
     del chg_funit4
     del chg_funit5
+
+
+def test_quantity_response():
+    """
+    Test quantity_response function.
+    """
+    quantity = np.array([1.0] * 10)
+    res = quantity_response(quantity,
+                            price_elasticity=0,
+                            aftertax_price1=None,
+                            aftertax_price2=None,
+                            income_elasticity=0,
+                            aftertax_income1=None,
+                            aftertax_income2=None)
+    assert np.allclose(res, np.zeros(quantity.shape))
+    one = np.ones(quantity.shape)
+    res = quantity_response(quantity,
+                            price_elasticity=-0.2,
+                            aftertax_price1=one,
+                            aftertax_price2=one,
+                            income_elasticity=0.1,
+                            aftertax_income1=one,
+                            aftertax_income2=(one + one))
+    assert not np.allclose(res, np.zeros(quantity.shape))
