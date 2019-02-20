@@ -4,20 +4,24 @@ Go [here](https://github.com/PSLmodels/Behavioral-Responses/pulls?q=is%3Apr+is%3
 for a complete commit history.
 
 
-2019-02-?? Release 0.6.0
+2019-0?-?? Release 0.6.0
 ------------------------
 (last merged pull request is
-[#39](https://github.com/PSLmodels/Behavioral-Responses/pull/39))
+[#??](https://github.com/PSLmodels/Behavioral-Responses/pull/??))
 
 **API Changes**
-- The response function returns somewhat different results (even though the API is the same) because now long-term capital gains are removed from the base taxable income used to compute the substitution effect
+- The `response` function returns somewhat different results (even though the API is the same) because now long-term capital gains are removed from the base taxable income used to compute the substitution effect
   [[#37](https://github.com/PSLmodels/Behavioral-Responses/pull/37)
   by Matt Jensen]
 
 **New Features**
-- Add optional dump argument to response function
+- Add optional dump argument to the `response` function
   [[#39](https://github.com/PSLmodels/Behavioral-Responses/pull/39)
   by Martin Holmer responding to request by Matt Jensen and Anderson Frailey]
+
+- Add `quantity_response` function that was formerly a Tax-Calculator utility function and provides a lower-level behavioral response capability
+  [[#43](https://github.com/PSLmodels/Behavioral-Responses/pull/43)
+  by Martin Holmer responding to suggestion by Max Ghenis]
 
 **Bug Fixes**
 - None
