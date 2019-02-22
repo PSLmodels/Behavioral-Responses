@@ -55,7 +55,7 @@ def test_default_response_function(cps_subsample):
     df2s = calc2s.dataframe(['iitax', 's006'])
     itax2s = round((df2s['iitax'] * df2s['s006']).sum() * 1e-9, 3)
     # ... calculate aggregate inctax using default behavior assumptions
-    default_beh_dict = tc.Calculator.read_json_assumptions('{}')
+    default_beh_dict = tc.Calculator.read_json_parameters('{}')
     _, df2d = response(calc1, calc2d, default_beh_dict, dump=True)
     itax2d = round((df2d['iitax'] * df2d['s006']).sum() * 1e-9, 3)
     assert np.allclose(itax2d, itax2s)
@@ -82,7 +82,7 @@ def test_nondefault_response_function(cps_subsample):
     "BE_inc": {"2018": -0.1},
     "BE_cg": {"2018": -0.79}
     }"""
-    beh_dict = tc.Calculator.read_json_assumptions(beh_json)
+    beh_dict = tc.Calculator.read_json_parameters(beh_json)
     # ... calculate behavioral response to reform
     pol = tc.Policy()
     calc1 = tc.Calculator(records=rec, policy=pol)
@@ -98,7 +98,7 @@ def test_nondefault_response_function(cps_subsample):
     itax2 = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     del df1
     del df2
-    assert np.allclose([itax1, itax2], [1422.156, 1368.489])
+    assert np.allclose([itax1, itax2], [1441.722, 1385.666])
 
 
 def test_alternative_behavior_parameters(cps_subsample):
@@ -112,7 +112,7 @@ def test_alternative_behavior_parameters(cps_subsample):
     assert refyear >= 2018
     reform = {refyear: {'_II_em': [1500]}}
     # ... specify alternative set of behavior parameters
-    beh_dict = tc.Calculator.read_json_assumptions(
+    beh_dict = tc.Calculator.read_json_parameters(
         '{"BE_inc": {"2018": -0.10}}'
     )
     # ... use the alternative behavior parameters and dump option
@@ -198,7 +198,7 @@ def test_sub_effect_independence(stcg):
     recs = tc.Records(data=input_dataframe,
                       start_year=refyear,
                       gfactors=None, weights=None)
-    beh_dict = tc.Calculator.read_json_assumptions(beh_json)
+    beh_dict = tc.Calculator.read_json_parameters(beh_json)
     pol = tc.Policy()
     calc1 = tc.Calculator(records=recs, policy=pol)
     assert calc1.current_year == refyear
