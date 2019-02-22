@@ -18,7 +18,8 @@ RELEASING BEHAVIORAL-RESPONSES CONDA PACKAGES
 
 --> create release X.Y.Z on GitHub using master branch
 
---> create packages with `pbrelease Behavioral-Responses behresp X.Y.Z` command
+--> create packages using this command:
+    `pbrelease Behavioral-Responses behresp X.Y.Z --also37`
 
 --> email policybrains-modelers list about the new release and packages
 ```

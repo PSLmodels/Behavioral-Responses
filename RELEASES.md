@@ -4,6 +4,29 @@ Go [here](https://github.com/PSLmodels/Behavioral-Responses/pulls?q=is%3Apr+is%3
 for a complete commit history.
 
 
+2019-02-22 Release 0.6.0
+------------------------
+(last merged pull request is
+[#46](https://github.com/PSLmodels/Behavioral-Responses/pull/46))
+
+**API Changes**
+- Require taxcalc package for Tax-Calculator 1.0 or higher
+  [[#46](https://github.com/PSLmodels/Behavioral-Responses/pull/46)
+  by Martin Holmer]
+
+**New Features**
+- Add optional dump argument to the `response` function
+  [[#39](https://github.com/PSLmodels/Behavioral-Responses/pull/39)
+  by Martin Holmer responding to request by Matt Jensen and Anderson Frailey]
+
+- Add `quantity_response` function that was formerly a Tax-Calculator utility function and that provides a lower-level behavioral response capability
+  [[#43](https://github.com/PSLmodels/Behavioral-Responses/pull/43)
+  by Martin Holmer responding to suggestion by Max Ghenis]
+
+**Bug Fixes**
+- None
+
+
 2018-12-14 Release 0.5.0
 ------------------------
 (last merged pull request is
