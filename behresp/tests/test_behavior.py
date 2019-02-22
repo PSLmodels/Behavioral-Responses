@@ -8,6 +8,7 @@ Tests for functions in behavior.py file.
 from io import StringIO
 import numpy as np
 import pandas as pd
+import pytest
 import taxcalc as tc
 from behresp import PARAM_INFO, response, quantity_response
 
@@ -133,51 +134,6 @@ def test_alternative_behavior_parameters(cps_subsample):
     del df2
 
 
-def test_sub_effect_independence():
-    """
-    Ensure that LTCG amount does not affect magnitude of substitution effect.
-    """
-    # specify reform that raises top-bracket marginal tax rate
-    refyear = 2020
-    reform = {refyear: {'_II_rt7': [0.70]}}
-    # specify a substitution effect behavioral response
-    beh_json = """{
-    "BE_sub": {"2013": 0.25}
-    }"""
-    # specify input consisting of two filing units with high earnings, but
-    # with one having large long-term capital gains and the other having
-    # no long-term capital gains
-    input_csv = (u'RECID,MARS,e00200,e00200p,p23250\n'
-                 u'1,1,1000000,1000000,500000\n'
-                 u'2,1,1000000,1000000,0\n')
-    recs = tc.Records(data=pd.read_csv(StringIO(input_csv)),
-                      start_year=refyear,
-                      gfactors=None, weights=None)
-    beh_dict = tc.Calculator.read_json_assumptions(beh_json)
-    pol = tc.Policy()
-    calc1 = tc.Calculator(records=recs, policy=pol)
-    assert calc1.current_year == refyear
-    pol.implement_reform(reform)
-    calc2 = tc.Calculator(records=recs, policy=pol)
-    assert calc2.current_year == refyear
-    del pol
-    df1, df2 = response(calc1, calc2, beh_dict)
-    del calc1
-    del calc2
-    # compute change in taxable income for each of the two filing units
-    chg_funit1 = df2['c04800'][0] - df1['c04800'][0]  # funit with RECID=1
-    chg_funit2 = df2['c04800'][1] - df1['c04800'][1]  # funit with RECID=2
-    del df1
-    del df2
-    # confirm reform reduces taxable income when assuming substitution effect
-    assert chg_funit1 < 0
-    assert chg_funit2 < 0
-    # confirm change in taxable income is same for the two filing units
-    assert np.allclose(chg_funit1, chg_funit2)
-    del chg_funit1
-    del chg_funit2
-
-
 def test_quantity_response():
     """
     Test quantity_response function.
@@ -200,3 +156,77 @@ def test_quantity_response():
                             aftertax_income1=one,
                             aftertax_income2=(one + one))
     assert not np.allclose(res, np.zeros(quantity.shape))
+
+
+@pytest.mark.skip
+@pytest.mark.parametrize("stcg",
+                         [-3600,
+                          -2400,
+                          -1200,
+                          0,
+                          1200,
+                          2400,
+                          3600,
+                          4800])
+def test_sub_effect_independence(stcg):
+    """
+    Ensure that LTCG amount does not affect magnitude of substitution effect.
+    """
+    # pylint: disable=too-many-locals
+    # specify reform that raises top-bracket marginal tax rate
+    refyear = 2020
+    reform = {refyear: {'_II_rt7': [0.70]}}
+    # specify a substitution effect behavioral response
+    beh_json = """{
+    "BE_sub": {"2013": 0.25}
+    }"""
+    # specify several high-earning filing units
+    num_recs = 9
+    input_csv = (u'RECID,MARS,e00200,e00200p,p22250,p23250\n'
+                 u'1,2,1000000,1000000,stcg,    0\n'
+                 u'2,2,1000000,1000000,stcg, 4800\n'
+                 u'3,2,1000000,1000000,stcg, 3600\n'
+                 u'4,2,1000000,1000000,stcg, 2400\n'
+                 u'5,2,1000000,1000000,stcg, 1200\n'
+                 u'6,2,1000000,1000000,stcg,    0\n'
+                 u'7,2,1000000,1000000,stcg,-1200\n'
+                 u'8,2,1000000,1000000,stcg,-2400\n'
+                 u'9,2,1000000,1000000,stcg,-3600\n')
+    inputcsv = input_csv.replace('stcg', str(stcg))
+    input_dataframe = pd.read_csv(StringIO(inputcsv))
+    assert len(input_dataframe.index) == num_recs
+    recs = tc.Records(data=input_dataframe,
+                      start_year=refyear,
+                      gfactors=None, weights=None)
+    beh_dict = tc.Calculator.read_json_assumptions(beh_json)
+    pol = tc.Policy()
+    calc1 = tc.Calculator(records=recs, policy=pol)
+    assert calc1.current_year == refyear
+    pol.implement_reform(reform)
+    calc2 = tc.Calculator(records=recs, policy=pol)
+    assert calc2.current_year == refyear
+    del pol
+    df1, df2 = response(calc1, calc2, beh_dict)
+    del calc1
+    del calc2
+    # compute change in taxable income for each of the filing units
+    chg_funit = dict()
+    for rid in range(1, num_recs + 1):
+        idx = rid - 1
+        chg_funit[rid] = df2['c04800'][idx] - df1['c04800'][idx]
+    del df1
+    del df2
+    # confirm reform reduces taxable income when assuming substitution effect
+    emsg = ''
+    for rid in range(1, num_recs + 1):
+        if not chg_funit[rid] < 0:
+            txt = '\nFAIL: stcg={} : chg[{}]={:.2f} is not negative'
+            emsg += txt.format(stcg, rid, chg_funit[rid])
+    # confirm change in taxable income is same for all filing units
+    for rid in range(2, num_recs + 1):
+        if not np.allclose(chg_funit[rid], chg_funit[1]):
+            txt = '\nFAIL: stcg={} : chg[{}]={:.2f} != chg[1]={:.2f}'
+            emsg += txt.format(stcg, rid, chg_funit[rid], chg_funit[1])
+    del chg_funit
+    if emsg:
+        raise ValueError(emsg)

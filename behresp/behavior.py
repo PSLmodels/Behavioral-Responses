@@ -85,12 +85,6 @@ def response(calc_1, calc_2, behavior, dump=False):
       implications", Journal of Public Economics 84:1-32 (2002) [see
       equation 2 on page 10].
 
-    Note: the substitution effect here is calculated from a taxable income
-      base that excludes long-term capital gains, since long-term capital
-      gains behavior may be modeled separately using the capital-gains
-      elasticity. You should consider this when applying estimates of the
-      elasticity of taxable income from the literature.
-
     Note: the nature of the capital-gains elasticity used here is similar
       to that used in Joint Committee on Taxation, "New Evidence on the
       Tax Elasticity of Capital Gains: A Joint Working Paper of the Staff
@@ -200,10 +194,8 @@ def response(calc_1, calc_2, behavior, dump=False):
             mtr1 = np.where(wage_mtr1 > mtr_cap, mtr_cap, wage_mtr1)
             mtr2 = np.where(wage_mtr2 > mtr_cap, mtr_cap, wage_mtr2)
             pch = ((1. - mtr2) / (1. - mtr1)) - 1.
-            # Note: c04800 is filing unit's taxable income and
-            #       p23250 is filing units' long-term capital gains
-            taxinc_less_ltcg = calc1.array('c04800') - calc1.array('p23250')
-            sub = (pvalue['BE_sub'] * pch * taxinc_less_ltcg)
+            # Note: c04800 is filing unit's taxable income
+            sub = pvalue['BE_sub'] * pch * calc1.array('c04800')
         # calculate magnitude of income effect
         if pvalue['BE_inc'] == 0.0:
             inc = np.zeros(calc1.array_len)
