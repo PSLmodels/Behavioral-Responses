@@ -7,13 +7,10 @@ for a complete commit history.
 2019-0?-?? Release 0.6.0
 ------------------------
 (last merged pull request is
-[#??](https://github.com/PSLmodels/Behavioral-Responses/pull/??))
+[#xx](https://github.com/PSLmodels/Behavioral-Responses/pull/xx))
 
 **API Changes**
-- The `response` function returns somewhat different results (even though the API is the same) because now long-term capital gains are removed from the base taxable income used to compute the substitution effect
-  [[#37](https://github.com/PSLmodels/Behavioral-Responses/pull/37) and
-   [#44](https://github.com/PSLmodels/Behavioral-Responses/pull/44)
-  by Matt Jensen]
+- None
 
 **New Features**
 - Add optional dump argument to the `response` function
