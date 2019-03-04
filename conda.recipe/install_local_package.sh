@@ -1,9 +1,15 @@
 #!/bin/bash
 # USAGE: ./install_local_package.sh
-# ACTION: (1) uninstall any installed package (remove_local_package.sh)
-#         (2) executes "conda install conda-build" (if necessary)
-#         (3) builds local behresp=0.0.0 package (conda build)
-#         (4) installs local behresp=0.0.0 package (conda install)
+# ACTION: (1) uninstall _ANY_ installed package (remove_local_package.sh)
+#         (2) execute "conda install conda-build" (if necessary)
+#         (3) build local behresp=0.0.0 package (conda build)
+#         (4) install local behresp=0.0.0 package (conda install), which
+#               requires EITHER
+#               (a) prior install of taxcalc package as follows:
+#                   $ conda install -c PSLmodels --yes taxcalc
+#               OR
+#               (b) prior one-time execution of the following command:
+#                   $ conda config --add channels PSLmodels
 # NOTE: for those with experience working with compiled languages,
 #       building a local conda package is analogous to compiling an executable
 
@@ -11,7 +17,7 @@ echo "STARTING : `date`"
 
 echo "BUILD-PREP..."
 
-# uninstall any installed package
+# uninstall _ANY_ installed package
 ./remove_local_package.sh
 
 # check version of conda package
@@ -31,16 +37,12 @@ if [[ $? -eq 0 ]]; then
 fi
 
 # build behresp conda package for this version of Python
-OPTIONS="--old-build-string --python 3.6"
+OPTIONS="--old-build-string --no-anaconda-upload -c PSLmodels --python 3.6"
 conda build $OPTIONS . 2>&1 | awk '$1~/BUILD/||$1~/TEST/'
 
-# install behresp conda package
+# install behresp conda package, which requires prior install of taxcalc
 echo "INSTALLATION..."
-conda install behresp=0.0.0 --use-local --yes 2>&1 > /dev/null
-# NOTE: the --use-local option was broken by conda 4.4.0 and fixed by 4.4.4
-# NOTE: see https://github.com/conda/conda/issues/6520
-# NOTE: interim usage was as follows:
-# NOTE: conda install -c local behresp=0.0.0 --yes 2>&1 > /dev/null
+conda install --yes -c local behresp=0.0.0 2>&1 > /dev/null
 
 # clean-up after package build
 echo "CLEAN-UP..."
