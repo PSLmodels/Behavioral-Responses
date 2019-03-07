@@ -10,43 +10,7 @@ import numpy as np
 import taxcalc as tc
 
 
-# Behavioral-Response parameter information
-PARAM_INFO = {
-    'BE_sub': {
-        'long_name': 'Substitution elasticity of taxable income',
-        'description': ('Defined as proportional change in taxable income '
-                        'divided by proportional change in marginal '
-                        'net-of-tax rate (1-MTR) on taxpayer earnings '
-                        'caused by the reform.  Must be zero or positive.'),
-        'default_value': 0.0,
-        'minimum_value': 0.0,
-        'maximum_value': 9e99
-    },
-    'BE_inc': {
-        'long_name': 'Income elasticity of taxable income',
-        'description': ('Defined as dollar change in taxable income '
-                        'divided by dollar change in after-tax income '
-                        'caused by the reform.  Must be zero or negative.'),
-        'default_value': 0.0,
-        'minimum_value': -9e99,
-        'maximum_value': 0.0
-    },
-    'BE_cg': {
-        'long_name': 'Semi-elasticity of long-term capital gains',
-        'description': ('Defined as change in logarithm of long-term '
-                        'capital gains divided by change in marginal tax '
-                        'rate (MTR) on long-term capital gains caused by '
-                        'the reform.  Must be zero or negative.  Read '
-                        'response function documentation (see below) for '
-                        'discussion of appropriate values.'),
-        'default_value': 0.0,
-        'minimum_value': -9e99,
-        'maximum_value': 0.0
-    }
-}
-
-
-def response(calc_1, calc_2, behavior, dump=False):
+def response(calc_1, calc_2, elasticities, dump=False):
     """
     Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
     returning results as a tuple of Pandas DataFrame objects (df1, df2) where:
@@ -61,8 +25,29 @@ def response(calc_1, calc_2, behavior, dump=False):
       to have had calc_all() executed before calling the response function.
       And neither calc_1 nor calc_2 are affected by this response function.
 
-    The behavior argument is a dictionary returned from the Tax-Calculator
-    Calculator.read_json_parameters method.
+    The elasticities argument is a dictionary containing the assumed response
+    elasticities.  Omitting an elasticity key:value pair in the dictionary
+    implies the omitted elasticity is assumed to be zero.  Here is the full
+    dictionary content and each elasticity's internal name:
+
+     be_sub = elasticities['sub']
+       Substitution elasticity of taxable income.
+       Defined as proportional change in taxable income divided by
+       proportional change in marginal net-of-tax rate (1-MTR) on taxpayer
+       earnings caused by the reform.  Must be zero or positive.
+
+     be_inc = elasticities['inc']
+       Income elasticity of taxable income.
+       Defined as dollar change in taxable income divided by dollar change
+       in after-tax income caused by the reform.  Must be zero or negative.
+
+     be_cg = elasticities['cg']
+       Semi-elasticity of long-term capital gains.
+       Defined as change in logarithm of long-term capital gains divided by
+       change in marginal tax rate (MTR) on long-term capital gains caused by
+       the reform.  Must be zero or negative.
+       Read response function documentation (see below) for discussion of
+       appropriate values.
 
     The optional dump argument controls the number of variables included
     in the two returned DataFrame objects.  When dump=False (its default
@@ -96,21 +81,29 @@ def response(calc_1, calc_2, behavior, dump=False):
       the elasticity used here times the weighted average marginal tax
       rate on long-term capital gains.  So, the JCT-CBO estimate of
       -0.792 for the epsilon elasticity (see JCT-CBO, Table 5) translates
-      into a much larger absolute value for the BE_cg semi-elasticity
+      into a much larger absolute value for the be_cg semi-elasticity
       used by Tax-Calculator.
       To calculate the elasticity from a semi-elasticity, we multiply by
       MTRs from TC and weight by shares of taxable gains. To avoid those
       with zero MTRs, we restrict this to the top 40% of tax units by AGI.
       Using this function, a semi-elasticity of -3.45 corresponds to a tax
       rate elasticity of -0.792.
+
     """
     # pylint: disable=too-many-locals,too-many-statements,too-many-branches
 
+    # Check function argument types and elasticity values
     calc1 = copy.deepcopy(calc_1)
     calc2 = copy.deepcopy(calc_2)
     assert isinstance(calc1, tc.Calculator)
     assert isinstance(calc2, tc.Calculator)
-    assert isinstance(behavior, dict)
+    assert isinstance(elasticities, dict)
+    be_sub = elasticities['sub'] if 'sub' in elasticities else 0.0
+    be_inc = elasticities['inc'] if 'inc' in elasticities else 0.0
+    be_cg = elasticities['cg'] if 'cg' in elasticities else 0.0
+    assert be_sub >= 0.0
+    assert be_inc <= 0.0
+    assert be_cg <= 0.0
 
     # Begin nested functions used only in this response function
     def _update_ordinary_income(taxinc_change, calc):
@@ -126,6 +119,7 @@ def response(calc_1, calc_2, behavior, dump=False):
         pos = np.array(agi_m_ided > 0., dtype=bool)
         delta_income = np.where(pos, taxinc_change, 0.)
         # allocate delta_income into three parts
+        # pylint: disable=unsupported-assignment-operation
         winc = calc.array('e00200')
         delta_winc = np.zeros_like(agi)
         delta_winc[pos] = delta_income[pos] * winc[pos] / agi_m_ided[pos]
@@ -168,13 +162,11 @@ def response(calc_1, calc_2, behavior, dump=False):
     calc2.calc_all()
     assert calc1.array_len == calc2.array_len
     assert calc1.current_year == calc2.current_year
-    pvalue = tc.Parameters.param_dict_for_year(calc1.current_year,
-                                               behavior, PARAM_INFO)
     mtr_cap = 0.99
     if dump:
         dvars = list(tc.Records.USABLE_READ_VARS | tc.Records.CALCULATED_VARS)
     # Calculate sum of substitution and income effects
-    if pvalue['BE_sub'] == 0.0 and pvalue['BE_inc'] == 0.0:
+    if be_sub == 0.0 and be_inc == 0.0:
         zero_sub_and_inc = True
         if dump:
             wage_mtr1 = np.zeros(calc1.array_len)
@@ -187,7 +179,7 @@ def response(calc_1, calc_2, behavior, dump=False):
                                       mtr_of='e00200p',
                                       tax_type='combined')
         # calculate magnitude of substitution effect
-        if pvalue['BE_sub'] == 0.0:
+        if be_sub == 0.0:
             sub = np.zeros(calc1.array_len)
         else:
             # proportional change in marginal net-of-tax rates on earnings
@@ -195,19 +187,19 @@ def response(calc_1, calc_2, behavior, dump=False):
             mtr2 = np.where(wage_mtr2 > mtr_cap, mtr_cap, wage_mtr2)
             pch = ((1. - mtr2) / (1. - mtr1)) - 1.
             # Note: c04800 is filing unit's taxable income
-            sub = pvalue['BE_sub'] * pch * calc1.array('c04800')
+            sub = be_sub * pch * calc1.array('c04800')
         # calculate magnitude of income effect
-        if pvalue['BE_inc'] == 0.0:
+        if be_inc == 0.0:
             inc = np.zeros(calc1.array_len)
         else:
             # dollar change in after-tax income
             # Note: combined is f.unit's income+payroll tax liability
             dch = calc1.array('combined') - calc2.array('combined')
-            inc = pvalue['BE_inc'] * dch
+            inc = be_inc * dch
         # calculate sum of substitution and income effects
         si_chg = sub + inc
     # Calculate long-term capital-gains effect
-    if pvalue['BE_cg'] == 0.0:
+    if be_cg == 0.0:
         ltcg_chg = np.zeros(calc1.array_len)
     else:
         # calculate marginal tax rates on long-term capital gains
@@ -216,7 +208,7 @@ def response(calc_1, calc_2, behavior, dump=False):
                                       mtr_of='p23250',
                                       tax_type='iitax')
         rch = ltcg_mtr2 - ltcg_mtr1
-        exp_term = np.exp(pvalue['BE_cg'] * rch)
+        exp_term = np.exp(be_cg * rch)
         new_ltcg = calc1.array('p23250') * exp_term
         ltcg_chg = new_ltcg - calc1.array('p23250')
     # Extract dataframe from calc1
