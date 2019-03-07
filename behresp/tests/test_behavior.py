@@ -49,9 +49,9 @@ def test_default_response_function(cps_subsample):
     del df2d
 
 
-def test_nondefault1_response_function(cps_subsample):
+def test_nondefault_response_function(cps_subsample):
     """
-    Test that non-default1 behavior parameters produce expected results.
+    Test that non-default behavior parameters produce expected results.
     """
     # ... specify Records object and policy reform
     rec = tc.Records.cps_constructor(data=cps_subsample)
