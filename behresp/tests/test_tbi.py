@@ -9,17 +9,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import taxcalc as tc
-from behresp import parameter_errors, run_nth_year_behresp_model, response
-
-
-def test_parameter_errors():
-    """
-    Test parameter_errors function.
-    """
-    behv_json = '{"BE_sub": {"2018": -0.25}}'
-    behv_dict = tc.Calculator.read_json_parameters(behv_json)
-    errmsg = parameter_errors(behv_dict, 2013, 10)
-    assert errmsg
+from behresp import run_nth_year_behresp_model, response
 
 
 def test_behavioral_response(cps_subsample):
@@ -32,8 +22,7 @@ def test_behavioral_response(cps_subsample):
     # specify policy reform and behavioral assumptions
     reform_json = '{"policy": {"_II_em": {"2020": [1500]}}}'
     params = tc.Calculator.read_json_param_objects(reform_json, None)
-    beh_json = '{"BE_sub": {"2013": 0.25}}'
-    beh_dict = tc.Calculator.read_json_parameters(beh_json)
+    elasticities_dict = {'sub': 0.25}
     # specify keyword arguments used in tbi function call
     kwargs = {
         'start_year': 2019,
@@ -46,7 +35,7 @@ def test_behavioral_response(cps_subsample):
             'growdiff_response': params['growdiff_response'],
             'consumption': params['consumption']
         },
-        'behavior': beh_dict,
+        'elasticities': elasticities_dict,
         'return_dict': False
     }
     # generate aggregate results two ways: using tbi and standard calls
@@ -71,7 +60,7 @@ def test_behavioral_response(cps_subsample):
                 calc2 = tc.Calculator(policy=pol, records=rec)
                 calc1.advance_to_year(cyr)
                 calc2.advance_to_year(cyr)
-                df1, df2 = response(calc1, calc2, beh_dict)
+                df1, df2 = response(calc1, calc2, elasticities_dict)
                 del calc1
                 del calc2
                 std_res[cyr] = dict()
@@ -136,8 +125,7 @@ def test_fuzzing_and_returning_dict():
     # specify policy reform and behavioral assumptions
     reform_json = '{"policy": {"_II_em": {"2020": [1500]}}}'
     params = tc.Calculator.read_json_param_objects(reform_json, None)
-    beh_json = '{"BE_sub": {"2013": 0.25}}'
-    beh_dict = tc.Calculator.read_json_parameters(beh_json)
+    elasticities_dict = {'sub': 0.25}
     # specify keyword arguments used in tbi function call
     kwargs = {
         'start_year': 2020,
@@ -150,7 +138,7 @@ def test_fuzzing_and_returning_dict():
             'growdiff_response': params['growdiff_response'],
             'consumption': params['consumption']
         },
-        'behavior': beh_dict,
+        'elasticities': elasticities_dict,
         'return_dict': True
     }
     # call run_nth_year_behresp_model function

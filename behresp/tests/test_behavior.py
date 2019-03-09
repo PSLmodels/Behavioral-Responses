@@ -10,24 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import taxcalc as tc
-from behresp import PARAM_INFO, response, quantity_response
-
-
-def test_param_info():
-    """
-    Test structure and content of PARAM_INFO dictionary.
-    """
-    # ensure PARAM_INFO has correct keys
-    actkeys = set(PARAM_INFO.keys())
-    expkeys = set(['BE_sub', 'BE_inc', 'BE_cg'])
-    assert actkeys == expkeys
-    for pname in PARAM_INFO:
-        pdict = PARAM_INFO[pname]
-        # ensure that minimum_value no less than maximum_value
-        assert pdict['minimum_value'] <= pdict['maximum_value']
-        # ensure that default_value is in [minimum_value,maximum_value] range
-        assert pdict['default_value'] >= pdict['minimum_value']
-        assert pdict['default_value'] <= pdict['maximum_value']
+from behresp import response, quantity_response
 
 
 def test_default_response_function(cps_subsample):
@@ -54,9 +37,8 @@ def test_default_response_function(cps_subsample):
     calc2s.calc_all()
     df2s = calc2s.dataframe(['iitax', 's006'])
     itax2s = round((df2s['iitax'] * df2s['s006']).sum() * 1e-9, 3)
-    # ... calculate aggregate inctax using default behavior assumptions
-    default_beh_dict = tc.Calculator.read_json_parameters('{}')
-    _, df2d = response(calc1, calc2d, default_beh_dict, dump=True)
+    # ... calculate aggregate inctax using zero response elasticities
+    _, df2d = response(calc1, calc2d, elasticities={}, dump=True)
     itax2d = round((df2d['iitax'] * df2d['s006']).sum() * 1e-9, 3)
     assert np.allclose(itax2d, itax2s)
     # ... clean up
@@ -74,15 +56,9 @@ def test_nondefault_response_function(cps_subsample):
     # ... specify Records object and policy reform
     rec = tc.Records.cps_constructor(data=cps_subsample)
     refyear = 2020
-    assert refyear >= 2018
     reform = {refyear: {'_II_em': [1500]}}
-    # ... specify non-default behavior assumptions
-    beh_json = """{
-    "BE_sub": {"2018": 0.25},
-    "BE_inc": {"2018": -0.1},
-    "BE_cg": {"2018": -0.79}
-    }"""
-    beh_dict = tc.Calculator.read_json_parameters(beh_json)
+    # ... specify non-default1 response elasticities
+    elasticities_dict = {'sub': 0.25, 'inc': -0.1, 'cg': -0.79}
     # ... calculate behavioral response to reform
     pol = tc.Policy()
     calc1 = tc.Calculator(records=rec, policy=pol)
@@ -91,7 +67,7 @@ def test_nondefault_response_function(cps_subsample):
     del pol
     calc1.advance_to_year(refyear)
     calc2.advance_to_year(refyear)
-    df1, df2 = response(calc1, calc2, beh_dict)
+    df1, df2 = response(calc1, calc2, elasticities_dict)
     del calc1
     del calc2
     itax1 = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
@@ -109,13 +85,10 @@ def test_alternative_behavior_parameters(cps_subsample):
     # ... specify Records object and policy reform
     rec = tc.Records.cps_constructor(data=cps_subsample)
     refyear = 2020
-    assert refyear >= 2018
     reform = {refyear: {'_II_em': [1500]}}
-    # ... specify alternative set of behavior parameters
-    beh_dict = tc.Calculator.read_json_parameters(
-        '{"BE_inc": {"2018": -0.10}}'
-    )
-    # ... use the alternative behavior parameters and dump option
+    # ... specify non-default response elasticities
+    elasticities_dict = {'inc': -0.1}
+    # ... calculate behavioral response to reform
     pol = tc.Policy()
     calc1 = tc.Calculator(records=rec, policy=pol)
     pol.implement_reform(reform)
@@ -123,15 +96,14 @@ def test_alternative_behavior_parameters(cps_subsample):
     del pol
     calc1.advance_to_year(refyear)
     calc2.advance_to_year(refyear)
-    df1, df2 = response(calc1, calc2, beh_dict, dump=True)
+    df1, df2 = response(calc1, calc2, elasticities_dict)
     del calc1
     del calc2
-    assert isinstance(df1, pd.DataFrame)
-    assert isinstance(df2, pd.DataFrame)
-    assert len(df1.index) == len(df2.index)
-    assert len(df1.index) > len(tc.DIST_VARIABLES)
+    itax1 = round((df1['iitax'] * df1['s006']).sum() * 1e-9, 3)
+    itax2 = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     del df1
     del df2
+    assert np.allclose([itax1, itax2], [1441.725, 1383.64])
 
 
 def test_quantity_response():
@@ -176,10 +148,8 @@ def test_sub_effect_independence(stcg):
     # specify reform that raises top-bracket marginal tax rate
     refyear = 2020
     reform = {refyear: {'_II_rt7': [0.70]}}
-    # specify a substitution effect behavioral response
-    beh_json = """{
-    "BE_sub": {"2013": 0.25}
-    }"""
+    # specify a substitution effect behavioral response elasticity
+    elasticities_dict = {'sub': 0.25}
     # specify several high-earning filing units
     num_recs = 9
     input_csv = (u'RECID,MARS,e00200,e00200p,p22250,p23250\n'
@@ -198,7 +168,6 @@ def test_sub_effect_independence(stcg):
     recs = tc.Records(data=input_dataframe,
                       start_year=refyear,
                       gfactors=None, weights=None)
-    beh_dict = tc.Calculator.read_json_parameters(beh_json)
     pol = tc.Policy()
     calc1 = tc.Calculator(records=recs, policy=pol)
     assert calc1.current_year == refyear
@@ -206,7 +175,7 @@ def test_sub_effect_independence(stcg):
     calc2 = tc.Calculator(records=recs, policy=pol)
     assert calc2.current_year == refyear
     del pol
-    df1, df2 = response(calc1, calc2, beh_dict)
+    df1, df2 = response(calc1, calc2, elasticities_dict)
     del calc1
     del calc2
     # compute change in taxable income for each of the filing units
