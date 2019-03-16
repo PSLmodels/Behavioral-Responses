@@ -74,7 +74,7 @@ def test_nondefault_response_function(cps_subsample):
     itax2 = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     del df1
     del df2
-    assert np.allclose([itax1, itax2], [1441.725, 1385.680])
+    assert np.allclose([itax1, itax2], [1457.443, 1402.367])
 
 
 def test_alternative_behavior_parameters(cps_subsample):
@@ -103,7 +103,7 @@ def test_alternative_behavior_parameters(cps_subsample):
     itax2 = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     del df1
     del df2
-    assert np.allclose([itax1, itax2], [1441.725, 1383.64])
+    assert np.allclose([itax1, itax2], [1457.443, 1399.183])
 
 
 def test_quantity_response():

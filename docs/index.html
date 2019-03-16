@@ -16,7 +16,7 @@ open-source model in the Policy Simulation Library (PSL) collection of
 USA tax models.  It assumes that you have already read the
 <a href="https://github.com/PSLmodels/Behavioral-Responses#behavioral-responses">
 documentation introduction</a>.  You always use Behavioral-Responses
-in conjunction with
+in conjunction with the latest version of
 <a href="https://PSLmodels.github.io/Tax-Calculator/">
 Tax-Calculator</a>, the static-analysis model in the PSL collection of
 USA tax models, by writing and executing a Python script.  For an
@@ -47,13 +47,14 @@ request.</p>
 
 <h2 id="paramlogic">Response Parameters and Logic</h2>
 
-<p>The Behavioral-Responses parameters and logic are described in the
+<p>The Behavioral-Responses elasticity parameters and logic are
+described in the
 <a href="https://github.com/PSLmodels/Behavioral-Responses/blob/master/behresp/behavior.py">
-behavior.py</a> file, where the parameters are defined in the
-<kbd>PARAM_INFO</kbd> dictionary, and the logic of how those parameters
-are used along with Tax-Calculator results is defined in the
-higher-level <kbd>response</kbd> function.  The lower-level <kbd>
-quantity_response</kbd> function is self-contained and described in
+behavior.py</a> file, where the <kbd>response</kbd> function
+elasticities are defined in its docstring and the logic of how those
+elasticities are used along with Tax-Calculator results is defined in the
+higher-level <kbd>response</kbd> function.  The lower-level
+<kbd>quantity_response</kbd> function is self-contained and described in
 the functions's docstring.</p>
 
 <p>An interface to Behavioral-Responses for the
