@@ -4,7 +4,7 @@ Go [here](https://github.com/PSLmodels/Behavioral-Responses/pulls?q=is%3Apr+is%3
 for a complete commit history.
 
 
-2019-03-xx Release 0.7.0
+2019-03-17 Release 0.7.0
 ------------------------
 (last merged pull request is
 [#52](https://github.com/PSLmodels/Behavioral-Responses/pull/52))
