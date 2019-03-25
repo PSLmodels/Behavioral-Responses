@@ -252,7 +252,7 @@ def quantity_response(quantity,
     Calculate dollar change in quantity using a log-log response equation,
     which assumes that the proportional change in the quantity is equal to
     the sum of two terms:
-    (1) the proportional change in the quanitity's marginal aftertax price
+    (1) the proportional change in the quantity's marginal aftertax price
         times an assumed price elasticity, and
     (2) the proportional change in aftertax income
         times an assumed income elasticity.
@@ -267,7 +267,7 @@ def quantity_response(quantity,
         the quantity in the log-log response equation
 
     aftertax_price1: numpy array
-        marginal aftertax price of the quanitity under baseline policy
+        marginal aftertax price of the quantity under baseline policy
           Note that this function forces prices to be in [0.01, inf] range,
           but the caller of this function may want to constrain negative
           or very small prices to be somewhat larger in order to avoid extreme
