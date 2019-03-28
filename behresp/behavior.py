@@ -343,12 +343,12 @@ def quantity_response(quantity          = np.array([1]),
     # pylint: disable=too-many-arguments
     substitution_effect = pch_response(
         price_elasticity,
-        np.where(aftertax_price1 < 0.01, 0.01, aftertax_price1),
-        np.where(aftertax_price2 < 0.01, 0.01, aftertax_price2))
+        np.maximum(aftertax_price1, 0.01),
+        np.maximum(aftertax_price2, 0.01))
     income_effect = pch_response(
         income_elasticity,
-        np.where(aftertax_income1 < 1.0, 1.0, aftertax_income1),
-        np.where(aftertax_income2 < 1.0, 1.0, aftertax_income2))
+        np.maximum(aftertax_income1, 1.0),
+        np.maximum(aftertax_income2, 1.0))
     return quantity * (substitution_effect + income_effect)
 
 
