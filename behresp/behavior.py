@@ -240,20 +240,21 @@ def response(calc_1, calc_2, elasticities, dump=False):
     # Return the two dataframes
     return (df1, df2)
 
-def pch_response(elasticity = np.zeros(1),
-                 val1       = np.zeros(1),
-                 val2       = np.zeros(1)):
+
+def pch_response(elasticity=np.zeros(1),
+                 val1=np.zeros(1),
+                 val2=np.zeros(1)):
     """
     Calculate the percentage change response, given an elasticity and
     original/new values. Can be used to calculate substitution or
     income effects.
-    
+
     Parameters
     ----------
     elasticity: value or numpy array representing elasticity(ies).
         Defaults to zero.
 
-    val1: value or numpy array representing original value(s). 
+    val1: value or numpy array representing original value(s).
         Defaults to zero.
 
     val2: value or numpy array representing new value(s).
@@ -270,13 +271,13 @@ def pch_response(elasticity = np.zeros(1),
     return elasticity * pch
 
 
-def quantity_response(quantity          = np.array([1]),
-                      price_elasticity  = np.zeros(1),
-                      aftertax_price1   = np.zeros(1),
-                      aftertax_price2   = np.zeros(1),
-                      income_elasticity = np.zeros(1),
-                      aftertax_income1  = np.zeros(1),
-                      aftertax_income2  = np.zeros(1)):
+def quantity_response(quantity=np.array([1]),
+                      price_elasticity=np.zeros(1),
+                      aftertax_price1=np.zeros(1),
+                      aftertax_price2=np.zeros(1),
+                      income_elasticity=np.zeros(1),
+                      aftertax_income1=np.zeros(1),
+                      aftertax_income2=np.zeros(1)):
     """
     Calculate dollar change in quantity using a log-log response equation,
     which assumes that the proportional change in the quantity is equal to
@@ -291,7 +292,8 @@ def quantity_response(quantity          = np.array([1]),
     Parameters
     ----------
     quantity: numpy array
-        pre-response quantity whose response is being calculated. Defaults to 1.
+        pre-response quantity whose response is being calculated.
+        Defaults to 1.
 
     price_elasticity: float
         coefficient of the percentage change in aftertax price of
@@ -352,13 +354,13 @@ def quantity_response(quantity          = np.array([1]),
     return quantity * (substitution_effect + income_effect)
 
 
-def labor_response(earnings          = np.array([1]),
-                   substitution_eti  = np.zeros(1),
-                   mtr1              = np.zeros(1),
-                   mtr2              = np.zeros(1),
-                   income_elasticity = np.zeros(1),
-                   aftertax_income1  = np.zeros(1),
-                   aftertax_income2  = np.zeros(1)):
+def labor_response(earnings=np.array([1]),
+                   substitution_eti=np.zeros(1),
+                   mtr1=np.zeros(1),
+                   mtr2=np.zeros(1),
+                   income_elasticity=np.zeros(1),
+                   aftertax_income1=np.zeros(1),
+                   aftertax_income2=np.zeros(1)):
     """
     Calculate labor response given earnings, substitution elasticity of taxable
     income, initial and new marginal tax rates, income elasticity, and initial
@@ -367,10 +369,12 @@ def labor_response(earnings          = np.array([1]),
     Parameters
     ----------
     earnings: numpy array
-        pre-response earnings whose response is being calculated. Defaults to 1.
+        pre-response earnings whose response is being calculated.
+        Defaults to 1.
 
     substitution_eti: float or numpy array
-        coefficient of the substitution elasticity of taxable income. Defaults to 0.
+        coefficient of the substitution elasticity of taxable income.
+        Defaults to 0.
 
     mtr1: numpy array
         marginal tax rate of earnings under baseline policy
@@ -410,11 +414,11 @@ def labor_response(earnings          = np.array([1]),
         dollar change in earnings calculated from log-log response equation
     """
     return quantity_response(
-        quantity = earnings,
-        price_elasticity = substitution_eti,
-        aftertax_price1 = 1 - mtr1,
-        aftertax_price2 = 1 - mtr2,
-        income_elasticity = income_elasticity,
-        aftertax_income1  = aftertax_income1,
-        aftertax_income2 = aftertax_income2
+        quantity=earnings,
+        price_elasticity=substitution_eti,
+        aftertax_price1=1 - mtr1,
+        aftertax_price2=1 - mtr2,
+        income_elasticity=income_elasticity,
+        aftertax_income1=aftertax_income1,
+        aftertax_income2=aftertax_income2
     )
