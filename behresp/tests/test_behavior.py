@@ -111,13 +111,7 @@ def test_quantity_response():
     Test quantity_response function.
     """
     quantity = np.array([1.0] * 10)
-    res = quantity_response(quantity,
-                            price_elasticity=0,
-                            aftertax_price1=None,
-                            aftertax_price2=None,
-                            income_elasticity=0,
-                            aftertax_income1=None,
-                            aftertax_income2=None)
+    res = quantity_response(quantity)
     assert np.allclose(res, np.zeros(quantity.shape))
     one = np.ones(quantity.shape)
     res = quantity_response(quantity,
