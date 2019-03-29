@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import taxcalc as tc
-from behresp import response, quantity_response
+from behresp import response, quantity_response, labor_response
 
 
 def test_default_response_function(cps_subsample):
@@ -122,6 +122,17 @@ def test_quantity_response():
                             aftertax_income1=one,
                             aftertax_income2=(one + one))
     assert not np.allclose(res, np.zeros(quantity.shape))
+
+
+def test_labor_response():
+    """
+    Test that labor_response produces the same result as quantity_response
+    where mtr* = 1 - aftertax_price*, using default earnings/quantity=1.
+    """
+    res_lr = labor_response(substitution_eti=1, mtr1=0.4, mtr2=0.5)
+    res_qr = quantity_response(price_elasticity=1, aftertax_price1=0.6,
+                               aftertax_price2=0.5)
+    assert np.allclose(res_lr, res_qr)
 
 
 @pytest.mark.skip
