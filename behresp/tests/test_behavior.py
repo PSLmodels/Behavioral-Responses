@@ -49,7 +49,8 @@ def test_default_response_function(cps_subsample):
     del df2d
 
 
-def test_nondefault_response_function(cps_subsample):
+@pytest.mark.parametrize("be_inc", [-0.1, 0.0])
+def test_nondefault_response_function(be_inc, cps_subsample):
     """
     Test that non-default behavior parameters produce expected results.
     """
@@ -58,7 +59,7 @@ def test_nondefault_response_function(cps_subsample):
     refyear = 2020
     reform = {refyear: {'_II_em': [1500]}}
     # ... specify non-default1 response elasticities
-    elasticities_dict = {'sub': 0.25, 'inc': -0.1, 'cg': -0.79}
+    elasticities_dict = {'sub': 0.25, 'inc': be_inc, 'cg': -0.79}
     # ... calculate behavioral response to reform
     pol = tc.Policy()
     calc1 = tc.Calculator(records=rec, policy=pol)
@@ -74,7 +75,10 @@ def test_nondefault_response_function(cps_subsample):
     itax2 = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     del df1
     del df2
-    assert np.allclose([itax1, itax2], [1457.443, 1402.367])
+    if be_inc == 0.0:
+        assert np.allclose([itax1, itax2], [1457.443, 1403.540])
+    elif be_inc == -0.1:
+        assert np.allclose([itax1, itax2], [1457.443, 1402.367])
 
 
 def test_alternative_behavior_parameters(cps_subsample):
