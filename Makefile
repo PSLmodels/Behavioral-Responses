@@ -32,7 +32,7 @@ clean:
 
 .PHONY=package
 package:
-	@pbrelease Behavioral-Responses behresp 0.0.0 --local .
+	@pbrelease Behavioral-Responses behresp 0.0.0 --local
 
 define pytest-cleanup
 find . -name *cache -maxdepth 1 -exec rm -r {} \;
