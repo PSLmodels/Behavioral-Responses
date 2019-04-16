@@ -21,7 +21,7 @@ def test_default_response_function(cps_subsample):
     rec = tc.Records.cps_constructor(data=cps_subsample)
     refyear = 2020
     assert refyear >= 2018
-    reform = {refyear: {'_II_em': [1500]}}
+    reform = {'II_em': {refyear: 1500}}
     # ... construct pre-reform calculator
     pol = tc.Policy()
     calc1 = tc.Calculator(records=rec, policy=pol)
@@ -57,7 +57,7 @@ def test_nondefault_response_function(be_inc, cps_subsample):
     # ... specify Records object and policy reform
     rec = tc.Records.cps_constructor(data=cps_subsample)
     refyear = 2020
-    reform = {refyear: {'_II_em': [1500]}}
+    reform = {'II_em': {refyear: 1500}}
     # ... specify non-default1 response elasticities
     elasticities_dict = {'sub': 0.25, 'inc': be_inc, 'cg': -0.79}
     # ... calculate behavioral response to reform
@@ -89,7 +89,7 @@ def test_alternative_behavior_parameters(cps_subsample):
     # ... specify Records object and policy reform
     rec = tc.Records.cps_constructor(data=cps_subsample)
     refyear = 2020
-    reform = {refyear: {'_II_em': [1500]}}
+    reform = {'II_em': {refyear: 1500}}
     # ... specify non-default response elasticities
     elasticities_dict = {'inc': -0.1}
     # ... calculate behavioral response to reform
@@ -151,7 +151,7 @@ def test_sub_effect_independence(stcg):
     # pylint: disable=too-many-locals
     # specify reform that raises top-bracket marginal tax rate
     refyear = 2020
-    reform = {refyear: {'_II_rt7': [0.70]}}
+    reform = {'II_rt7': {refyear: 0.70}}
     # specify a substitution effect behavioral response elasticity
     elasticities_dict = {'sub': 0.25}
     # specify several high-earning filing units
