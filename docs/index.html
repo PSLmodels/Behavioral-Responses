@@ -3,11 +3,14 @@
 <head>
 <title>Using Behavioral-Responses</title>
 <style>
-div { max-width: 19cm }
+body {
+  max-width: 19cm;
+  margin: 0 auto;
+  padding: 0px 4px 0px 4px;
+}
 </style>
 </head>
 <body>
-<div>
 
 <h1 id="top">Using Behavioral-Responses</h1>
 
@@ -19,8 +22,8 @@ documentation introduction</a>.  You always use Behavioral-Responses
 in conjunction with the latest version of
 <a href="https://PSLmodels.github.io/Tax-Calculator/">
 Tax-Calculator</a>, the static-analysis model in the PSL collection of
-USA tax models, by writing and executing a Python script.  For an
-introduction to writing Python scripts using Tax-Calculator, read the
+USA tax models, by writing and executing a Python program.  For an
+introduction to writing Python programs using Tax-Calculator, read the
 tested recipes in our
 <a href="https://PSLmodels.github.io/Tax-Calculator/cookbook.html">
 Tax-Calculator cookbook</a>.  If you want to participate in the
@@ -38,14 +41,7 @@ and provide a link to the materials required to replicate your
 analysis or, at least, note that those materials are available upon
 request.</p>
 
-
-<h2 id="doc">Document Contents</h2>
-
-<p><a href="#paramlogic">Response Parameters and Logic</a></p>
-<p><a href="#pyrecipe">Basic Python Recipe</a></p>
-
-
-<h2 id="paramlogic">Response Parameters and Logic</h2>
+<h3 id="paramlogic">Response Parameters and Logic</h3>
 
 <p>The Behavioral-Responses elasticity parameters and logic are
 described in the
@@ -57,16 +53,7 @@ higher-level <kbd>response</kbd> function.  The lower-level
 <kbd>quantity_response</kbd> function is self-contained and described in
 the functions's docstring.</p>
 
-<p>An interface to Behavioral-Responses for the
-<a href="https://www.ospc.org/taxbrain/">TaxBrain web application</a>
-is located in the
-<a href="https://github.com/PSLmodels/Behavioral-Responses/blob/master/behresp/tbi.py">
-tbi.py</a> file.  But this is of interest only to TaxBrain developers.</p>
-
-<p><a href="#doc">Back to Document Contents</a></p>
-
-
-<h2 id="pyrecipe">Basic Python Recipe</h2>
+<h3 id="pyrecipe">Basic Python Recipe</h3>
 
 <p>A tested recipe for using the Behavioral-Responses parameters and
 <kbd>response</kbd> function is contained in recipe 2 of the
@@ -75,7 +62,7 @@ Tax-Calculator cookbook</a> and in the <kbd>test_response_function</kbd> in the
 <a href="https://github.com/PSLmodels/Behavioral-Responses/blob/master/behresp/tests/test_behavior.py">
 test_behavior.py</a> file.</p>
 
-<p>Notice that when writing a script like this you must import both
+<p>Notice that when writing a program like this you must import both
 the <kbd>taxcalc</kbd> package (to access Tax-Calculator) and
 the <kbd>behresp</kbd> package (to access Behavioral-Responses).  Both
 these conda packages can be installed on your computer using this
@@ -105,8 +92,5 @@ responses to the post-reform Tax-Calculator object and recompute
 tax liabilities, producing tax liability estimates that include the
 partial-equilibrium effects of the estimated behavioral responses.
 
-<p><a href="#doc">Back to Document Contents</a></p>
-
-</div>
 </body>
 </html>
