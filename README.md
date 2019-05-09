@@ -8,11 +8,11 @@ Behavioral-Responses
 ====================
 
 This document tells you how to begin using or contributing to
-Behavioral-Responses.  Begin by reading the [Tax-Calculator user
-guide](https://PSLmodels.github.io/Tax-Calculator/) and then the
-[Behavioral-Responses user
+Behavioral-Responses.  Begin by reading the [Tax-Calculator
+documentation](https://PSLmodels.github.io/Tax-Calculator/) and then
+the [Behavioral-Responses user
 guide](https://PSLmodels.github.io/Behavioral-Responses/) that
-describes how to write Python scripts that use Behavioral-Responses
+describes how to write Python programs that use Behavioral-Responses
 together with Tax-Calculator on your own computer.
 
 
@@ -22,17 +22,16 @@ What is Behavioral-Responses?
 Behavioral-Responses, which is part of the Policy Simulation Library
 (PSL) collection of USA tax models, estimates partial-equilibrium
 behavioral responses to changes in the US federal individual income
-and payroll tax system as simulated by
-[Tax-Calculator](https://github.com/PSLmodels/Tax-Calculator).  It
-provides two ways of doing this: (1) the `response` function, which
-contains higher-level logic that supports the TaxBrain "Partial
-Equilibrium Simulation" capability and requires specification of only
-the elasticities, and (2) the `quantity_response` function, which
-contains lower-level logic that requires specification of the quantity
-whose response is to be estimated, requires specification of the
-marginal tax rates and elasticities to be used in the response
-calculation, and allows the response estimation to be conducted by
-subgroup with different elasticities for each subgroup.
+and payroll tax system as simulated by Tax-Calculator.  It provides
+two ways of doing this: (1) the `response` function, which contains
+higher-level logic that supports the Tax-Brain "Partial Equilibrium
+Simulation" capability and requires specification of only the
+elasticities, and (2) the `quantity_response` function, which contains
+lower-level logic that requires specification of the quantity whose
+response is to be estimated, requires specification of the marginal
+tax rates and elasticities to be used in the response calculation, and
+allows the response estimation to be conducted by subgroup with
+different elasticities for each subgroup.
 
 
 Disclaimer
