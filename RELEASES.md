@@ -4,6 +4,23 @@ Go [here](https://github.com/PSLmodels/Behavioral-Responses/pulls?q=is%3Apr+is%3
 for a complete commit history.
 
 
+2019-05-13 Release 0.8.0
+------------------------
+(last merged pull request is
+[#62](https://github.com/PSLmodels/Behavioral-Responses/pull/62))
+
+**API Changes**
+- None
+
+**New Features**
+- Simplify extraction of variables from Calculator objects in `response` function
+  [[#62](https://github.com/PSLmodels/Behavioral-Responses/pull/62)
+  by Martin Holmer]
+
+**Bug Fixes**
+- None
+
+
 2019-03-17 Release 0.7.0
 ------------------------
 (last merged pull request is
