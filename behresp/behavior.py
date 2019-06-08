@@ -164,7 +164,8 @@ def response(calc_1, calc_2, elasticities, dump=False):
     assert calc1.current_year == calc2.current_year
     mtr_cap = 0.99
     if dump:
-        dvars = list(tc.Records.USABLE_READ_VARS | tc.Records.CALCULATED_VARS)
+        recs_vinfo = tc.Records(data=None)  # contains records VARINFO only
+        dvars = list(recs_vinfo.USABLE_READ_VARS | recs_vinfo.CALCULATED_VARS)
     # Calculate sum of substitution and income effects
     if be_sub == 0.0 and be_inc == 0.0:
         zero_sub_and_inc = True
