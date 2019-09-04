@@ -1,6 +1,3 @@
 [run]
 omit =
-    behresp/_version.py
-    behresp/*json
-    behresp/tbi.py
     behresp/tests/*

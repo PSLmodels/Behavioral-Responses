@@ -21,7 +21,7 @@ def test_default_response_function(cps_subsample):
     rec = tc.Records.cps_constructor(data=cps_subsample)
     refyear = 2020
     assert refyear >= 2018
-    reform = {refyear: {'_II_em': [1500]}}
+    reform = {'II_em': {refyear: 1500}}
     # ... construct pre-reform calculator
     pol = tc.Policy()
     calc1 = tc.Calculator(records=rec, policy=pol)
@@ -49,16 +49,17 @@ def test_default_response_function(cps_subsample):
     del df2d
 
 
-def test_nondefault_response_function(cps_subsample):
+@pytest.mark.parametrize("be_inc", [-0.1, 0.0])
+def test_nondefault_response_function(be_inc, cps_subsample):
     """
     Test that non-default behavior parameters produce expected results.
     """
     # ... specify Records object and policy reform
     rec = tc.Records.cps_constructor(data=cps_subsample)
     refyear = 2020
-    reform = {refyear: {'_II_em': [1500]}}
+    reform = {'II_em': {refyear: 1500}}
     # ... specify non-default1 response elasticities
-    elasticities_dict = {'sub': 0.25, 'inc': -0.1, 'cg': -0.79}
+    elasticities_dict = {'sub': 0.25, 'inc': be_inc, 'cg': -0.79}
     # ... calculate behavioral response to reform
     pol = tc.Policy()
     calc1 = tc.Calculator(records=rec, policy=pol)
@@ -74,7 +75,10 @@ def test_nondefault_response_function(cps_subsample):
     itax2 = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     del df1
     del df2
-    assert np.allclose([itax1, itax2], [1457.443, 1402.367])
+    if be_inc == 0.0:
+        assert np.allclose([itax1, itax2], [1461.002, 1407.800])
+    elif be_inc == -0.1:
+        assert np.allclose([itax1, itax2], [1461.002, 1406.627])
 
 
 def test_alternative_behavior_parameters(cps_subsample):
@@ -85,7 +89,7 @@ def test_alternative_behavior_parameters(cps_subsample):
     # ... specify Records object and policy reform
     rec = tc.Records.cps_constructor(data=cps_subsample)
     refyear = 2020
-    reform = {refyear: {'_II_em': [1500]}}
+    reform = {'II_em': {refyear: 1500}}
     # ... specify non-default response elasticities
     elasticities_dict = {'inc': -0.1}
     # ... calculate behavioral response to reform
@@ -103,7 +107,7 @@ def test_alternative_behavior_parameters(cps_subsample):
     itax2 = round((df2['iitax'] * df2['s006']).sum() * 1e-9, 3)
     del df1
     del df2
-    assert np.allclose([itax1, itax2], [1457.443, 1399.183])
+    assert np.allclose([itax1, itax2], [1461.002, 1402.725])
 
 
 def test_quantity_response():
@@ -152,7 +156,7 @@ def test_sub_effect_independence(stcg):
     # pylint: disable=too-many-locals
     # specify reform that raises top-bracket marginal tax rate
     refyear = 2020
-    reform = {refyear: {'_II_rt7': [0.70]}}
+    reform = {'II_rt7': {refyear: 0.70}}
     # specify a substitution effect behavioral response elasticity
     elasticities_dict = {'sub': 0.25}
     # specify several high-earning filing units

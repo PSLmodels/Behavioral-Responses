@@ -164,7 +164,8 @@ def response(calc_1, calc_2, elasticities, dump=False):
     assert calc1.current_year == calc2.current_year
     mtr_cap = 0.99
     if dump:
-        dvars = list(tc.Records.USABLE_READ_VARS | tc.Records.CALCULATED_VARS)
+        recs_vinfo = tc.Records(data=None)  # contains records VARINFO only
+        dvars = list(recs_vinfo.USABLE_READ_VARS | recs_vinfo.CALCULATED_VARS)
     # Calculate sum of substitution and income effects
     if be_sub == 0.0 and be_inc == 0.0:
         zero_sub_and_inc = True
@@ -218,7 +219,7 @@ def response(calc_1, calc_2, elasticities, dump=False):
         df1.drop('mtr_paytax', axis='columns', inplace=True)
         df1['mtr_combined'] = wage_mtr1 * 100
     else:
-        df1 = calc1.distribution_table_dataframe()
+        df1 = calc1.dataframe(tc.DIST_VARIABLES)
     del calc1
     # Add behavioral-response changes to income sources
     calc2_behv = copy.deepcopy(calc2)
@@ -235,7 +236,7 @@ def response(calc_1, calc_2, elasticities, dump=False):
         df2.drop('mtr_paytax', axis='columns', inplace=True)
         df2['mtr_combined'] = wage_mtr2 * 100
     else:
-        df2 = calc2_behv.distribution_table_dataframe()
+        df2 = calc2_behv.dataframe(tc.DIST_VARIABLES)
     del calc2_behv
     # Return the two dataframes
     return (df1, df2)
