@@ -242,13 +242,43 @@ def response(calc_1, calc_2, elasticities, dump=False):
     return (df1, df2)
 
 
-def quantity_response(quantity,
-                      price_elasticity,
-                      aftertax_price1,
-                      aftertax_price2,
-                      income_elasticity,
-                      aftertax_income1,
-                      aftertax_income2):
+def pch_response(elasticity=np.zeros(1),
+                 val1=np.zeros(1),
+                 val2=np.zeros(1)):
+    """
+    Calculate the percentage change response, given an elasticity and
+    original/new values. Can be used to calculate substitution or
+    income effects.
+
+    Parameters
+    ----------
+    elasticity: value or numpy array representing elasticity(ies).
+        Defaults to zero.
+
+    val1: value or numpy array representing original value(s).
+        Defaults to zero.
+
+    val2: value or numpy array representing new value(s).
+        Defaults to zero.
+
+    Returns
+    -------
+    pch_response: numpy array
+        Percentage change in the response, calculated essentially as:
+        elasticity * (val2 / val1 - 1).
+    """
+    val1 = np.where(val1 == 0, np.nan, val1)  # Avoids a warning.
+    pch = np.where(np.isnan(val1), 0, val2 / val1 - 1.)
+    return elasticity * pch
+
+
+def quantity_response(quantity=np.array([1]),
+                      price_elasticity=np.zeros(1),
+                      aftertax_price1=np.zeros(1),
+                      aftertax_price2=np.zeros(1),
+                      income_elasticity=np.zeros(1),
+                      aftertax_income1=np.zeros(1),
+                      aftertax_income2=np.zeros(1)):
     """
     Calculate dollar change in quantity using a log-log response equation,
     which assumes that the proportional change in the quantity is equal to
@@ -257,22 +287,25 @@ def quantity_response(quantity,
         times an assumed price elasticity, and
     (2) the proportional change in aftertax income
         times an assumed income elasticity.
+    Not all inputs are required, so it's possible to calculate only the price
+    or income effects by providing a subset of arguments. Accepts arrays.
 
     Parameters
     ----------
     quantity: numpy array
-        pre-response quantity whose response is being calculated
+        pre-response quantity whose response is being calculated.
+        Defaults to 1.
 
     price_elasticity: float
         coefficient of the percentage change in aftertax price of
-        the quantity in the log-log response equation
+        the quantity in the log-log response equation. Defaults to 0.
 
     aftertax_price1: numpy array
         marginal aftertax price of the quantity under baseline policy
           Note that this function forces prices to be in [0.01, inf] range,
           but the caller of this function may want to constrain negative
           or very small prices to be somewhat larger in order to avoid extreme
-          proportional changes in price.
+          proportional changes in price. Defaults to 0.
           Note this is NOT an array of marginal tax rates (MTR), but rather
             usually 1-MTR (or in the case of quantities, like charitable
             giving, whose MTR values are non-positive, 1+MTR).
@@ -282,28 +315,28 @@ def quantity_response(quantity,
           Note that this function forces prices to be in [0.01, inf] range,
           but the caller of this function may want to constrain negative
           or very small prices to be somewhat larger in order to avoid extreme
-          proportional changes in price.
+          proportional changes in price. Defaults to 0.
           Note this is NOT an array of marginal tax rates (MTR), but rather
             usually 1-MTR (or in the case of quantities, like charitable
             giving, whose MTR values are non-positive, 1+MTR).
 
     income_elasticity: float
         coefficient of the percentage change in aftertax income in the
-        log-log response equation
+        log-log response equation. Defaults to 0.
 
     aftertax_income1: numpy array
         aftertax income under baseline policy
           Note that this function forces income to be in [1, inf] range,
           but the caller of this function may want to constrain negative
           or small incomes to be somewhat larger in order to avoid extreme
-          proportional changes in aftertax income.
+          proportional changes in aftertax income. Defaults to 0.
 
     aftertax_income2: numpy array
         aftertax income under reform policy
           Note that this function forces income to be in [1, inf] range,
           but the caller of this function may want to constrain negative
           or small incomes to be somewhat larger in order to avoid extreme
-          proportional changes in aftertax income.
+          proportional changes in aftertax income. Defaults to 0.
 
     Returns
     -------
@@ -311,21 +344,82 @@ def quantity_response(quantity,
         dollar change in quantity calculated from log-log response equation
     """
     # pylint: disable=too-many-arguments
-    # compute price term in log-log response equation
-    if price_elasticity == 0.:
-        pch_price = np.zeros(quantity.shape)
-    else:
-        atp1 = np.where(aftertax_price1 < 0.01, 0.01, aftertax_price1)
-        atp2 = np.where(aftertax_price2 < 0.01, 0.01, aftertax_price2)
-        pch_price = atp2 / atp1 - 1.
-    # compute income term in log-log response equation
-    if income_elasticity == 0.:
-        pch_income = np.zeros(quantity.shape)
-    else:
-        ati1 = np.where(aftertax_income1 < 1.0, 1.0, aftertax_income1)
-        ati2 = np.where(aftertax_income2 < 1.0, 1.0, aftertax_income2)
-        pch_income = ati2 / ati1 - 1.
-    # compute response
-    pch_q = price_elasticity * pch_price + income_elasticity * pch_income
-    qresponse = pch_q * quantity
-    return qresponse
+    substitution_effect = pch_response(
+        price_elasticity,
+        np.maximum(aftertax_price1, 0.01),
+        np.maximum(aftertax_price2, 0.01))
+    income_effect = pch_response(
+        income_elasticity,
+        np.maximum(aftertax_income1, 1.0),
+        np.maximum(aftertax_income2, 1.0))
+    return quantity * (substitution_effect + income_effect)
+
+
+def labor_response(earnings=np.array([1]),
+                   substitution_eti=np.zeros(1),
+                   mtr1=np.zeros(1),
+                   mtr2=np.zeros(1),
+                   income_elasticity=np.zeros(1),
+                   aftertax_income1=np.zeros(1),
+                   aftertax_income2=np.zeros(1)):
+    """
+    Calculate labor response given earnings, substitution elasticity of taxable
+    income, initial and new marginal tax rates, income elasticity, and initial
+    and new after-tax income. Accepts arrays.
+
+    Parameters
+    ----------
+    earnings: numpy array
+        pre-response earnings whose response is being calculated.
+        Defaults to 1.
+
+    substitution_eti: float or numpy array
+        coefficient of the substitution elasticity of taxable income.
+        Defaults to 0.
+
+    mtr1: numpy array
+        marginal tax rate of earnings under baseline policy
+          Note that this function forces MTRs to be in [-inf, 0.99] range,
+          but the caller of this function may want to constrain large MTRs
+          to be somewhat smaller in order to avoid extreme
+          proportional changes in earnings. Defaults to 0.
+
+     mtr2: numpy array
+        marginal tax rate of earnings under reform policy
+          Note that this function forces MTRs to be in [-inf, 0.99] range,
+          but the caller of this function may want to constrain large MTRs
+          to be somewhat smaller in order to avoid extreme
+          proportional changes in earnings. Defaults to 0.
+
+    income_elasticity: float
+        coefficient of the percentage change in aftertax income in the
+        log-log response equation. Defaults to 0.
+
+    aftertax_income1: numpy array
+        aftertax income under baseline policy
+          Note that this function forces income to be in [1, inf] range,
+          but the caller of this function may want to constrain negative
+          or small incomes to be somewhat larger in order to avoid extreme
+          proportional changes in aftertax income. Defaults to 0.
+
+    aftertax_income2: numpy array
+        aftertax income under reform policy
+          Note that this function forces income to be in [1, inf] range,
+          but the caller of this function may want to constrain negative
+          or small incomes to be somewhat larger in order to avoid extreme
+          proportional changes in aftertax income. Defaults to 0.
+
+    Returns
+    -------
+    response: numpy array
+        dollar change in earnings calculated from log-log response equation
+    """
+    return quantity_response(
+        quantity=earnings,
+        price_elasticity=substitution_eti,
+        aftertax_price1=1 - mtr1,
+        aftertax_price2=1 - mtr2,
+        income_elasticity=income_elasticity,
+        aftertax_income1=aftertax_income1,
+        aftertax_income2=aftertax_income2
+    )
