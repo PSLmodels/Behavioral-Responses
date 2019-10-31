@@ -3,6 +3,22 @@ BEHAVIORAL-RESPONSES RELEASE HISTORY
 Go [here](https://github.com/PSLmodels/Behavioral-Responses/pulls?q=is%3Apr+is%3Aclosed)
 for a complete commit history.
 
+2019-10-31 Release 0.10.0
+------------------------
+(last merged pull request is
+[#71](https://github.com/PSLmodels/Behavioral-Responses/pull/71))
+
+**API Changes**
+- None
+
+**New Features**
+- New capabilities for estimating differential behavioral responses
+  [[#58](https://github.com/PSLmodels/Behavioral-Responses/pull/58)
+  by Max Ghenis]
+
+**Bug Fixes**
+- None
+
 
 2019-06-08 Release 0.9.0
 ------------------------
