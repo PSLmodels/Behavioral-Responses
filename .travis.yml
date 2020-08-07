@@ -15,6 +15,7 @@ install:
   - conda create -n behresp-dev python=$TRAVIS_PYTHON_VERSION;
   - source activate behresp-dev
   - conda env update -f environment.yml
+  - pip install pycodestyle 
   - pip install pyyaml
   - pip install coverage
   - pip install codecov
