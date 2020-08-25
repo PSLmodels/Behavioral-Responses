@@ -3,4 +3,4 @@ channels:
 - PSLmodels
 dependencies:
 - python
-- "taxcalc>=2.3.0"
+- "taxcalc>=3.0.0"
