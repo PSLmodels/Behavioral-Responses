@@ -15,7 +15,7 @@ install:
   - conda create -n behresp-dev python=$TRAVIS_PYTHON_VERSION;
   - source activate behresp-dev
   - conda env update -f environment.yml
-  - pip install pycodestyle 
+  - pip install pytest-pycodestyle 
   - pip install pyyaml
   - pip install coverage
   - pip install codecov
@@ -23,7 +23,7 @@ install:
 
 # command to run tests
 script:
-  - python -c "import behresp"; coverage run -m pytest -v -m "not requires_pufcsv and not pre_release and not local"
+  - python -c "import behresp"; coverage run -m pytest -v -m "not requires_pufcsv and not pre_release and not local" --pycodestyle
 
 after_success:
   - codecov
