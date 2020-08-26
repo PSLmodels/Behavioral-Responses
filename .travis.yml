@@ -23,7 +23,7 @@ install:
 
 # command to run tests
 script:
-  - python -c "import behresp"; coverage run -m pytest -v -m "not requires_pufcsv and not pre_release and not local" --pycodestyle
+  - python -c "import behresp"; coverage run -m pytest -v -m "not requires_pufcsv and not pre_release and not local"
 
 after_success:
   - codecov
