@@ -5,3 +5,4 @@ channels:
 dependencies:
 - python
 - "taxcalc>=3.0.0"
+- pytest
