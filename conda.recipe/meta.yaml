@@ -6,10 +6,12 @@ requirements:
   build:
     - python
     - "taxcalc>=3.0.0"
+    - pytest
 
   run:
     - python
     - "taxcalc>=3.0.0"
+    - pytest
 
 test:
   imports:
