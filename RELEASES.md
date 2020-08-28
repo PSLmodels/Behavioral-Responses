@@ -12,7 +12,10 @@ for a complete commit history.
 - None
 
 **New Features**
-- Behavioral-Responses is compatible with Python 3.8. 
+- Compatibility with Python 3.8. 
+  [[#74](https://github.com/PSLmodels/Behavioral-Responses/pull/74)
+  by Jason DeBacker]
+- Test results updated for Tax-Calculator 3.0.0. 
   [[#74](https://github.com/PSLmodels/Behavioral-Responses/pull/74)
   by Jason DeBacker]
 
