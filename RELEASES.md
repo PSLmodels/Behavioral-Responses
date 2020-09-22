@@ -3,6 +3,26 @@ BEHAVIORAL-RESPONSES RELEASE HISTORY
 Go [here](https://github.com/PSLmodels/Behavioral-Responses/pulls?q=is%3Apr+is%3Aclosed)
 for a complete commit history.
 
+2020-08-28 Release 0.11.0
+------------------------
+(last merged pull request is
+[#76](https://github.com/PSLmodels/Behavioral-Responses/pull/76))
+
+**API Changes**
+- None
+
+**New Features**
+- Compatibility with Python 3.8. 
+  [[#74](https://github.com/PSLmodels/Behavioral-Responses/pull/74)
+  by Jason DeBacker]
+- Test results updated for Tax-Calculator 3.0.0. 
+  [[#74](https://github.com/PSLmodels/Behavioral-Responses/pull/74)
+  by Jason DeBacker]
+
+**Bug Fixes**
+- None
+
+
 2019-10-31 Release 0.10.0
 ------------------------
 (last merged pull request is
