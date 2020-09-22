@@ -3,7 +3,7 @@ BEHAVIORAL-RESPONSES RELEASE HISTORY
 Go [here](https://github.com/PSLmodels/Behavioral-Responses/pulls?q=is%3Apr+is%3Aclosed)
 for a complete commit history.
 
-2020-08-28 Release 0.11.0
+2020-09-22 Release 0.11.0
 ------------------------
 (last merged pull request is
 [#76](https://github.com/PSLmodels/Behavioral-Responses/pull/76))
