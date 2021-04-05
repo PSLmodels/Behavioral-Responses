@@ -45,7 +45,8 @@ def test_default_response_function(cps_subsample, inplace):
     df_before_2 = calc2d.dataframe(tc.DIST_VARIABLES)
 
     # ... calculate aggregate inctax using zero response elasticities
-    _, df2d = response(calc1, calc2d, elasticities={}, dump=True, inplace=inplace)
+    _, df2d = response(calc1, calc2d, elasticities={}, dump=True,
+                       inplace=inplace)
     itax2d = round((df2d['iitax'] * df2d['s006']).sum() * 1e-9, 3)
     assert np.allclose(itax2d, itax2s)
 
