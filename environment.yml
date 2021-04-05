@@ -1,6 +1,8 @@
 name: behresp-dev
 channels:
 - PSLmodels
+- conda-forge
 dependencies:
 - python
-- "taxcalc>=2.3.0"
+- "taxcalc>=3.0.0"
+- pytest
