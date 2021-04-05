@@ -1,9 +1,9 @@
 dist: xenial
 language: python
 python:
-  - "3.6"
   - "3.7"
   - "3.8"
+  - "3.9"
 
 install:
   # Install conda
@@ -15,7 +15,7 @@ install:
   - conda create -n behresp-dev python=$TRAVIS_PYTHON_VERSION;
   - source activate behresp-dev
   - conda env update -f environment.yml
-  - pip install pytest-pycodestyle 
+  - pip install pytest-pycodestyle
   - pip install pyyaml
   - pip install coverage
   - pip install codecov
