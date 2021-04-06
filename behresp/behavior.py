@@ -19,13 +19,14 @@ def response(calc_1, calc_2, elasticities, dump=False, inplace=False):
         behavioral responses given by the nature of the baseline-to-reform
         change in policy and elasticities in the specified behavior dictionary.
 
-    Note: By default, this function internally modifies a copy of calc_2 records to account
-      for behavioral responses that arise from the policy reform that involves
-      moving from calc1 policy to calc2 policy.  Neither calc_1 nor calc_2 need
-      to have had calc_all() executed before calling the response function.
-      By default, neither calc_1 nor calc_2 are affected by this response
-      function. To perform in-place calculations that affect calc_1 and calc_2,
-      set inplace equal to True.
+    Note: By default, this function internally modifies a copy of calc_2
+      records to account for behavioral responses that arise from the
+      policy reform that involves moving from calc1 policy to calc2
+      policy.  Neither calc_1 nor calc_2 need to have had calc_all()
+      executed before calling the response function. By default, neither
+      calc_1 nor calc_2 are affected by this response function. To
+      perform in-place calculations that affect calc_1 and calc_2, set
+      inplace equal to True.
 
     The elasticities argument is a dictionary containing the assumed response
     elasticities.  Omitting an elasticity key:value pair in the dictionary
