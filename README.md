@@ -58,12 +58,12 @@ providing details on what you think should be added to Behavioral-Responses.
 
 If you want to **propose code changes**, follow the directions in the
 [Tax-Calculator contributor
-guide](https://github.com/PSLmodels/Tax-Calculator/blob/master/CONTRIBUTING.md#tax-calculator-contributor-guide)
+guide](https://taxcalc.pslmodels.org/contributing/contributor_guide.html)
 on how to fork and clone the Behavioral-Responses git repository.
 Before developing any code changes be sure to read completely the
 Tax-Calculator contributor guide and then read about the
 [Tax-Calculator pull-request
-workflow](https://github.com/PSLmodels/Tax-Calculator/blob/master/WORKFLOW.md#tax-calculator-pull-request-workflow).
+workflow](https://taxcalc.pslmodels.org/contributing/pr_workflow.html).
 When reading both documents, be sure to mentally substitute
 Behavioral-Response for Tax-Calculator and behresp for taxcalc.
 
