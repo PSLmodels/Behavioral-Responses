@@ -5,12 +5,12 @@ package:
 requirements:
   build:
     - python
-    - "taxcalc>=3.0.0"
+    - "taxcalc>=3.1.0"
     - pytest
 
   run:
     - python
-    - "taxcalc>=3.0.0"
+    - "taxcalc>=3.1.0"
     - pytest
 
 test:
