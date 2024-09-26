@@ -10,20 +10,23 @@ import numpy as np
 import taxcalc as tc
 
 
-def response(calc_1, calc_2, elasticities, dump=False):
+def response(calc_1, calc_2, elasticities, dump=False, inplace=False):
     """
     Implements TaxBrain "Partial Equilibrium Simulation" dynamic analysis
     returning results as a tuple of Pandas DataFrame objects (df1, df2) where:
-    df1 is extracted from a baseline-policy calc_1 copy, and
-    df2 is extracted from a reform-policy calc_2 copy that incorporates the
+    df1 is extracted from a baseline-policy calc_1, and
+    df2 is extracted from a reform-policy calc_2 that incorporates the
         behavioral responses given by the nature of the baseline-to-reform
         change in policy and elasticities in the specified behavior dictionary.
 
-    Note: this function internally modifies a copy of calc_2 records to account
-      for behavioral responses that arise from the policy reform that involves
-      moving from calc1 policy to calc2 policy.  Neither calc_1 nor calc_2 need
-      to have had calc_all() executed before calling the response function.
-      And neither calc_1 nor calc_2 are affected by this response function.
+    Note: By default, this function internally modifies a copy of calc_2
+      records to account for behavioral responses that arise from the
+      policy reform that involves moving from calc1 policy to calc2
+      policy.  Neither calc_1 nor calc_2 need to have had calc_all()
+      executed before calling the response function. By default, neither
+      calc_1 nor calc_2 are affected by this response function. To
+      perform in-place calculations that affect calc_1 and calc_2, set
+      inplace equal to True.
 
     The elasticities argument is a dictionary containing the assumed response
     elasticities.  Omitting an elasticity key:value pair in the dictionary
@@ -93,8 +96,12 @@ def response(calc_1, calc_2, elasticities, dump=False):
     # pylint: disable=too-many-locals,too-many-statements,too-many-branches
 
     # Check function argument types and elasticity values
-    calc1 = copy.deepcopy(calc_1)
-    calc2 = copy.deepcopy(calc_2)
+    if inplace:
+        calc1 = calc_1
+        calc2 = calc_2
+    else:
+        calc1 = copy.deepcopy(calc_1)
+        calc2 = copy.deepcopy(calc_2)
     assert isinstance(calc1, tc.Calculator)
     assert isinstance(calc2, tc.Calculator)
     assert isinstance(elasticities, dict)
@@ -220,10 +227,14 @@ def response(calc_1, calc_2, elasticities, dump=False):
         df1['mtr_combined'] = wage_mtr1 * 100
     else:
         df1 = calc1.dataframe(tc.DIST_VARIABLES)
-    del calc1
+    if not inplace:
+        del calc1
     # Add behavioral-response changes to income sources
-    calc2_behv = copy.deepcopy(calc2)
-    del calc2
+    if inplace:
+        calc2_behv = calc2
+    else:
+        calc2_behv = copy.deepcopy(calc2)
+        del calc2
     if not zero_sub_and_inc:
         calc2_behv = _update_ordinary_income(si_chg, calc2_behv)
     calc2_behv = _update_cap_gain_income(ltcg_chg, calc2_behv)
@@ -237,7 +248,8 @@ def response(calc_1, calc_2, elasticities, dump=False):
         df2['mtr_combined'] = wage_mtr2 * 100
     else:
         df2 = calc2_behv.dataframe(tc.DIST_VARIABLES)
-    del calc2_behv
+    if not inplace:
+        del calc2_behv
     # Return the two dataframes
     return (df1, df2)
 
